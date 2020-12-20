@@ -6,12 +6,14 @@ import {
   import commandsInit from 'iroha-helpers/lib/commands/index';
 import queriesInit from 'iroha-helpers/lib/queries/index';
 import { ExtractionBatch } from '../../src/interfaces/BatchExtractionInterfaces';
-import { escapeJSON } from '../utils/utils'
+import { escapeJSON, returnJSON } from '../utils/utils'
+import { BehaviorSubject, Observable, of } from 'rxjs'
 
 class ThemeAController {
-    private getAccountDetail$: any;
-    private setAccountDetail$: any;
-    private extractionBatch$: any;
+    getAccountDetail$ = new BehaviorSubject<any>(null);
+    getAccount$ = new BehaviorSubject<any>(null);
+    setAccountDetail$ = new BehaviorSubject<any>(null);
+    setAccount$ = new BehaviorSubject<any>(null);
     private IROHA_ADDRESS = 'localhost:50051';
     private adminAccount = 'admin@test';
     private commandService = new CommandService(this.IROHA_ADDRESS,grpc.credentials.createInsecure());
@@ -22,7 +24,7 @@ class ThemeAController {
     
     private COMMAND_OPTIONS = {
         privateKeys: [this.adminPriv],
-        creatorAccountId: 'admin@test',
+        creatorAccountId: this.adminAccount,
         quorum: 1,
         commandService: this.commandService,
         timeoutLimit: 1000000,
@@ -30,74 +32,74 @@ class ThemeAController {
 
     private QUERY_OPTIONS = {
         privateKey: this.adminPriv,
-        creatorAccountId: 'admin@test',
+        creatorAccountId: this.adminAccount,
         queryService: this.queryService,
         timeoutLimit: 5000,
     };
 
-    private accountKey = 'admin@test';
-    private batchKeySearch = 'batch_001';
-    private respBatchSearchKey = 'batch_0001';
-
-    getAccountDetail() {
-        // private res;
-
+    // private accountKey = 'admin@test';
+    // private batchKeySearch = 'batch_0013_TEST';
+    // private respBatchSearchKey = 'batch_0001';
+     // DONE
+    getAccountDetail(account: any, key: any) {
         this.queries.getAccountDetail(this.QUERY_OPTIONS, {
-          accountId: this.accountKey,
-          key: this.batchKeySearch,
+          accountId: account,
+          key: key,
           pageSize: 100,
-          paginationKey: this.batchKeySearch,
-          paginationWriter: this.accountKey,
-          writer: this.accountKey,
+          paginationKey: key,
+          paginationWriter: account,
+          writer: account,
         }).then((resp) => {
-            this.getAccountDetail$ = resp;
+            this.getAccountDetail$.next({response:returnJSON(resp), error: null});
         })
         .catch((err) => {
-          console.log(err);
+          this.getAccountDetail$.next({response:null, error: err.message});
         });
-        return this.getAccountDetail$;
+        // return this.getAccountDetail$;
        
     }
-
-    setAccountDetail(batchReq: any){
-        // "crudeExtract": BatchInformation,
-        // "unboundFiltrate": BatchInformation,
-        // "finalElution": BatchInformation,
-        // "unaccounted": BatchInformation,
-        // "notes": [],
-        // "batchStatus": BatchStatus,
-        // "batchRequest": BatchRequest
-         this.extractionBatch$ = {
-            crudeExtract: batchReq.crudeExtract,
-            unboundFiltrate: batchReq.unboundFiltrate,
-            finalElution: batchReq.finalElution,
-            unaccounted: batchReq.unaccounted,
-            notes: batchReq.notes,
-            batchStatus: batchReq.batchStatus,
-            batchRequest: batchReq.batchRequest,
-         } 
-        // this.extractionBatch$ = {
-        //     ...batchReq
-        // }
-        console.log("\n\nbatch1::: "+JSON.stringify(this.extractionBatch$));
-        this.commands.setAccountDetail(this.COMMAND_OPTIONS,{
-            accountId: this.adminAccount,
-            key: this.extractionBatch$.batchRequest.batchId,
-            value: escapeJSON(this.extractionBatch$)
-          })
-        .then(resp => {
-            this.setAccountDetail$ = resp;
-            console.log("resp:::: "+JSON.stringify(resp));
-            console.log("setAccountDetail:::: "+JSON.stringify(this.setAccountDetail$));
-            return this.setAccountDetail$;
+    // TO DO - CHECK IF IT WORKS
+    getAccount(account: any) {
+        this.queries.getAccount(this.QUERY_OPTIONS, {
+          accountId: account
+        }).then((resp: any) => {
+            // var response: any = resp;
+            this.getAccount$.next({response:returnJSON(resp.jsonData), error: null});
         })
         .catch((err) => {
-            console.log(err);
-            return err;
-          });
-        console.log("final::: "+this.setAccountDetail$);
-        return this.setAccountDetail$;
+          this.getAccount$.next({response:null, error: err.message});
+        });
+        // return this.getAccountDetail$;
+       
     }
+    // TO DO INTERFACE FOR SET ACCOUNT DETAILS
+    setAccountDetail(accountId: any, req: any){
+       this.commands.setAccountDetail(this.COMMAND_OPTIONS,{
+            accountId: accountId,
+            key: req.batchRequest.batchId,
+            value: escapeJSON(req)
+          })
+        .then((resp: any) => {
+             this.setAccountDetail$.next({response:returnJSON(resp), error: null});
+        })
+        .catch((err) => {
+            this.setAccountDetail$.next({response: null, error: err.message});
+          });
+    }
+    // TO DO INTERFACE FOR SET ACCOUNT
+    setAccount(accountId: any, req: any){
+      this.commands.setAccountDetail(this.COMMAND_OPTIONS,{
+           accountId: accountId,
+           key: req.batchRequest.batchId,
+           value: escapeJSON(req)
+         })
+       .then((resp: any) => {
+            this.setAccountDetail$.next({response:returnJSON(resp), error: null});
+       })
+       .catch((err) => {
+           this.setAccountDetail$.next({response: null, error: err.message});
+         });
+   }
   }
   
   export = new ThemeAController();

@@ -29,6 +29,6 @@ export  type ExtractionBatch = {
     "unaccounted"?: BatchInformation,
     "notes"?: Array<String>,
     "batchStatus"?: BatchStatus,
-    "batchRequest": BatchRequest
+    "batchRequest"?: BatchRequest
   }
   
