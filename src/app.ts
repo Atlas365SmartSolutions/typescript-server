@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import express from 'express';
-import MasterRouter from './routers/MasterRouter';
+import IrohaRouter from './routers/IrohaRouter';
 
 // load the environment variables from the .env file
 dotenv.config({
@@ -13,7 +13,7 @@ dotenv.config({
  */
 class Server {
     public app = express();
-    public router = MasterRouter;
+    public router = IrohaRouter;
   }
   
 

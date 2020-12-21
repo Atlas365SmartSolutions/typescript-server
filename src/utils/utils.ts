@@ -14,6 +14,7 @@ export function escapeJSON(request: any){
     .replace(searchVal,replaceVal);
     return myEscapedJSONString;
 };
+
 export function returnJSON(request: any){
     var myJSONString = JSON.stringify(request);
     var searchVal = /("{)/g;
@@ -27,7 +28,5 @@ export function returnJSON(request: any){
      .replace(searchVal2,replaceVal2)
      .replace(searchVal3,replaceVal3)
     )
-    // .replace('\\"', '')
-    // .replace('\', '');
     return myEscapedJSONString;
 };
