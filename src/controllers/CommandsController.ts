@@ -5,7 +5,6 @@ import {
   import commandsInit from 'iroha-helpers/lib/commands/index';
 import { escapeJSON, returnJSON } from '../utils/utils';
 import { BehaviorSubject } from 'rxjs';
-
 class CommandsController {
 
     // COMMANDS
@@ -54,8 +53,7 @@ class CommandsController {
           .catch((err) => {
               this.addAssetQuantity$.next({response: null, error: err.message});
             });
-    }
-
+    };
     addPeer(address: String, peerKey: String){
       this.commands.addPeer(this.COMMAND_OPTIONS,{
           address: address,
@@ -67,8 +65,7 @@ class CommandsController {
         .catch((err) => {
             this.addPeer$.next({response: null, error: err.message});
           });
-    }
-
+    };
     addSignatory(address: String, publicKey: String){
       this.commands.addSignatory(this.COMMAND_OPTIONS,{
           address: address,
@@ -80,8 +77,7 @@ class CommandsController {
       .catch((err) => {
           this.addSignatory$.next({response: null, error: err.message});
         });
-    }
-
+    };
     appendRole(accountId: String, roleName: String){
       this.commands.appendRole(this.COMMAND_OPTIONS,{
             accountId: accountId,
@@ -93,8 +89,7 @@ class CommandsController {
         .catch((err) => {
             this.appendRole$.next({response: null, error: err.message});
           });
-    }
-
+    };
     compareAndSetAccountDetail(accountId: any, key: any, value: any, oldValue: any){
       this.commands.compareAndSetAccountDetail(this.COMMAND_OPTIONS, {
         accountId: accountId,
@@ -108,8 +103,7 @@ class CommandsController {
         .catch((err) => {
             this.compareAndSetAccountDetail$.next({response: null, error: err.message});
           });
-    }
-
+    };
     createAccount(accountName: String, domainId: String, publicKey: String){
       this.commands.createAccount(this.COMMAND_OPTIONS, {
         accountName: accountName,
@@ -122,8 +116,7 @@ class CommandsController {
         .catch((err) => {
             this.createAccount$.next({response: null, error: err.message});
           });
-    }
-
+    };
     createAsset(assetName: String, domainId: String, precision: Number){
       this.commands.createAsset(this.COMMAND_OPTIONS, {
         assetName: assetName,
@@ -136,8 +129,7 @@ class CommandsController {
         .catch((err) => {
             this.createAccount$.next({response: null, error: err.message});
           });
-    }
-
+    };
     createDomain(domainId: String, defaultRole: String){
       this.commands.createDomain(this.COMMAND_OPTIONS, {
         domainId: domainId,
@@ -149,9 +141,8 @@ class CommandsController {
         .catch((err) => {
             this.createDomain$.next({response: null, error: err.message});
           });
-    }
-
-    createRole(roleName: String, permissionsList: Number[]){
+    };
+    createRole(roleName: String, permissionsList: Array<Number>){
       this.commands.createRole(this.COMMAND_OPTIONS, {
         roleName: roleName,
         permissionsList: permissionsList
@@ -162,8 +153,7 @@ class CommandsController {
         .catch((err) => {
             this.createRole$.next({response: null, error: err.message});
           });
-    }
-
+    };
     detachRole(accountId: String, roleName: String){
       this.commands.detachRole(this.COMMAND_OPTIONS, {
         accountId: accountId,
@@ -175,8 +165,7 @@ class CommandsController {
         .catch((err) => {
             this.detachRole$.next({response: null, error: err.message});
           });
-    }
-
+    };
     grantPermission(accountId: String, permission: String){
       this.commands.grantPermission(this.COMMAND_OPTIONS, {
         accountId: accountId,
@@ -188,8 +177,7 @@ class CommandsController {
         .catch((err) => {
             this.grantPermission$.next({response: null, error: err.message});
           });
-    }
-
+    };
     removePeer(publicKey: String){
       this.commands.removePeer(this.COMMAND_OPTIONS, {
         publicKey: publicKey
@@ -200,8 +188,7 @@ class CommandsController {
         .catch((err) => {
             this.removePeer$.next({response: null, error: err.message});
           });
-    }
-
+    };
     removeSignatory(accountId: String, publicKey: String){
       this.commands.removeSignatory(this.COMMAND_OPTIONS, {
         accountId: accountId,
@@ -213,8 +200,7 @@ class CommandsController {
         .catch((err) => {
             this.removeSignatory$.next({response: null, error: err.message});
           });
-    }
-
+    };
     revokePermission(accountId: String, permission: String){
       this.commands.revokePermission(this.COMMAND_OPTIONS, {
         accountId: accountId,
@@ -226,7 +212,7 @@ class CommandsController {
         .catch((err) => {
             this.revokePermission$.next({response: null, error: err.message});
           });
-    }
+    };
     setAccountDetail(accountId: any, req: any){
           this.commands.setAccountDetail(this.COMMAND_OPTIONS,{
               accountId: accountId,
@@ -239,8 +225,7 @@ class CommandsController {
           .catch((err) => {
               this.setAccountDetail$.next({response: null, error: err.message});
             });
-    }
-
+    };
     setAccountQuorum(accountId: String, quorum: Number){
       this.commands.setAccountQuorum(this.COMMAND_OPTIONS,{
             accountId: accountId,
@@ -252,8 +237,7 @@ class CommandsController {
         .catch((err) => {
             this.setAccountQuorum$.next({response: null, error: err.message});
           });
-    }
-
+    };
     subtractAssetQuantity(assetId: String, amount: Number){
       this.commands.subtractAssetQuantity(this.COMMAND_OPTIONS,{
             assetId: assetId,
@@ -265,8 +249,7 @@ class CommandsController {
         .catch((err) => {
             this.subtractAssetQuantity$.next({response: null, error: err.message});
           });
-    }
-
+    };
     transferAsset(srcAccountId: String, destAccountId: String, assetId: String, description: String, amount: Number){
       this.commands.transferAsset(this.COMMAND_OPTIONS,{
             srcAccountId: srcAccountId,
@@ -281,7 +264,7 @@ class CommandsController {
         .catch((err) => {
             this.transferAsset$.next({response: null, error: err.message});
           });
-    }
+    };
   }
   
   export = new CommandsController();
