@@ -53,7 +53,7 @@ class QueriesController {
         this.queries.getAccount(this.QUERY_OPTIONS, {
           accountId: accountId
         }).then((resp: AccountResponse) => {
-            this.getAccount$.next({response:returnJSON(resp.account?.json_data), error: null});
+            this.getAccount$.next({response:resp, error: null});
         })
         .catch((err) => {
           this.getAccount$.next({response:null, error: err.message});

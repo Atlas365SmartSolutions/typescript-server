@@ -54,6 +54,7 @@ onResponse) {
  * @link https://iroha.readthedocs.io/en/master/develop/api/queries.html#get-account
  */
 function getAccount(queryOptions, params) {
+    console.log("getting account details...::::>>>>>>>");
     return sendQuery(queryOptions, queryHelper_1["default"].addQuery(queryHelper_1["default"].emptyQuery(), 'getAccount', validation_1["default"](params, ['accountId'])), function (resolve, reject, responseName, response) {
         if (responseName !== 'ACCOUNT_RESPONSE') {
             var error = JSON.stringify(response.toObject().errorResponse);
