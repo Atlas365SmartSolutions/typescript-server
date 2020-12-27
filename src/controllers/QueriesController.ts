@@ -1,8 +1,8 @@
 import grpc from 'grpc';
 import {
     QueryService_v1Client as QueryService
-  } from 'iroha-helpers/lib/proto/endpoint_grpc_pb';
-import queriesInit from 'iroha-helpers/lib/queries/index';
+  } from '../iroha-helpers/lib/proto/endpoint_grpc_pb';
+import queriesInit from '../iroha-helpers/lib/queries/index';
 import { returnJSON } from '../utils/utils'
 import { BehaviorSubject } from 'rxjs'
 import { AccountResponse, SignatoriesResponse,

@@ -1,8 +1,8 @@
 import grpc from 'grpc';
 import {
     CommandService_v1Client as CommandService
-  } from 'iroha-helpers/lib/proto/endpoint_grpc_pb';
-  import commandsInit from 'iroha-helpers/lib/commands/index';
+  } from '../iroha-helpers/lib/proto/endpoint_grpc_pb';
+  import commandsInit from '../iroha-helpers/lib/commands/index';
 import { escapeJSON, returnJSON } from '../utils/utils';
 import { BehaviorSubject } from 'rxjs';
 class CommandsController {
