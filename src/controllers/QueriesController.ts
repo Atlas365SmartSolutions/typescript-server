@@ -1,8 +1,8 @@
 import grpc from 'grpc';
 import {
     QueryService_v1Client as QueryService
-  } from '../iroha-helpers/lib/proto/endpoint_grpc_pb';
-import queriesInit from '../iroha-helpers/lib/queries/index';
+  } from 'iroha-helpers-ts/lib/proto/endpoint_grpc_pb';
+import queriesInit from 'iroha-helpers-ts/lib/queries/index';
 import { returnJSON } from '../utils/utils'
 import { BehaviorSubject } from 'rxjs'
 import { AccountResponse, SignatoriesResponse,
@@ -10,7 +10,8 @@ import { AccountResponse, SignatoriesResponse,
         TransactionsPageResponse, AccountAssetResponse,
         AccountDetailResponse, Asset, PeersResponse,
         RolesResponse, RolePermissionsResponse,
-        BlockResponse
+        BlockResponse,
+        EngineReceiptsResponse
        } from '../interfaces/Interfaces';
 
 class QueriesController {
@@ -133,8 +134,8 @@ class QueriesController {
     getEngineReceipts(txHash: Number) {
       this.queries.getEngineReceipts(this.QUERY_OPTIONS, {
         txHash: txHash
-      }).then((resp: BlockResponse) => {
-          this.getEngineReceipts$.next({response:returnJSON(resp.block), error: null});
+      }).then((resp: EngineReceiptsResponse) => {
+          this.getEngineReceipts$.next({response:returnJSON(resp), error: null});
       })
       .catch((err) => {
         this.getEngineReceipts$.next({response:null, error: err.message});
@@ -164,7 +165,7 @@ class QueriesController {
       this.queries.getRawAccount(this.QUERY_OPTIONS, {
         accountId: accountId
       }).then((resp: AccountResponse) => {
-          this.getRawAccount$.next({response:returnJSON(resp.account?.json_data), error: null});
+          this.getRawAccount$.next({response:returnJSON(resp.account?.jsonData), error: null});
       })
       .catch((err) => {
         this.getRawAccount$.next({response:null, error: err.message});
