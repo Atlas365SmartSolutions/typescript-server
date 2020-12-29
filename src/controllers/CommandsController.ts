@@ -42,18 +42,22 @@ class CommandsController {
     };
 
       // COMMANDS
-    addAssetQuantity(accountId: String, amount: Number){
+    addAssetQuantity(assetId: String, amount: String){
         this.commands.addAssetQuantity(this.COMMAND_OPTIONS,{
-              accountId: accountId,
+              assetId: assetId,
               amount: amount
             })
           .then((resp: any) => {
-              this.addAssetQuantity$.next({response:returnJSON(resp), error: null});
+            console.log('addAssetTxId: '+JSON.stringify(resp));
+            
+
+              this.addAssetQuantity$.next({response:resp, error: null});
           })
           .catch((err) => {
               this.addAssetQuantity$.next({response: null, error: err.message});
             });
     };
+
     addPeer(address: String, peerKey: String){
       this.commands.addPeer(this.COMMAND_OPTIONS,{
           address: address,
@@ -238,7 +242,7 @@ class CommandsController {
             this.setAccountQuorum$.next({response: null, error: err.message});
           });
     };
-    subtractAssetQuantity(assetId: String, amount: Number){
+    subtractAssetQuantity(assetId: String, amount: String){
       this.commands.subtractAssetQuantity(this.COMMAND_OPTIONS,{
             assetId: assetId,
             amount: amount
@@ -250,7 +254,7 @@ class CommandsController {
             this.subtractAssetQuantity$.next({response: null, error: err.message});
           });
     };
-    transferAsset(srcAccountId: String, destAccountId: String, assetId: String, description: String, amount: Number){
+    transferAsset(srcAccountId: String, destAccountId: String, assetId: String, description: String, amount: String){
       this.commands.transferAsset(this.COMMAND_OPTIONS,{
             srcAccountId: srcAccountId,
             destAccountId: destAccountId,

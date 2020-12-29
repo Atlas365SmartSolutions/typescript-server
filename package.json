@@ -14,7 +14,7 @@
     "express": "^4.17.1",
     "grpc": "^1.24.4",
     "grpc-web-client": "^0.7.0",
-    "iroha-helpers-ts": "^0.9.2-ss",
+    "iroha-helpers-ts": "^0.9.3-ss",
     "rxjs": "^6.6.3"
   },
   "devDependencies": {
