@@ -3,7 +3,7 @@ import {
     QueryService_v1Client as QueryService
   } from 'iroha-helpers-ts/lib/proto/endpoint_grpc_pb';
 import queriesInit from 'iroha-helpers-ts/lib/queries/index';
-import { returnJSON } from '../utils/utils'
+import { returnJSON, escapeJSON } from '../utils/utils'
 import { BehaviorSubject } from 'rxjs'
 import { AccountResponse, SignatoriesResponse,
         TransactionsResponse, PendingTransactionsPageResponse,
@@ -53,19 +53,20 @@ class QueriesController {
     getAccount(accountId: any) {
         this.queries.getAccount(this.QUERY_OPTIONS, {
           accountId: accountId
-        }).then((resp: AccountResponse) => {
+        }).then((resp: any) => {
             this.getAccount$.next({response:resp, error: null});
         })
         .catch((err) => {
           this.getAccount$.next({response:null, error: err.message});
         });
+       
     };
     getAccountTransactions(accountId: String) {
       this.queries.getAccountTransactions(this.QUERY_OPTIONS, {
         accountId: accountId,
         pageSize: 100
       }).then((resp: TransactionsPageResponse) => {
-          this.getAccountTransactions$.next({response:returnJSON(resp), error: null});
+          this.getAccountTransactions$.next({response:resp, error: null});
       })
       .catch((err) => {
         this.getAccountTransactions$.next({response:null, error: err.message});
@@ -98,6 +99,7 @@ class QueriesController {
         this.getAccountDetail$.next({response:null, error: err.message});
       });
     };
+    // NEED TO SET UP TRANSACTION
     getAccountAssetTransactions(accountId: any, assetId: any, firstTxHash: any) {
       this.queries.getAccountAssetTransactions(this.QUERY_OPTIONS, {
         accountId: accountId,
@@ -125,22 +127,24 @@ class QueriesController {
       this.queries.getBlock(this.QUERY_OPTIONS, {
         height: height
       }).then((resp: BlockResponse) => {
-          this.getBlock$.next({response:returnJSON(resp.block), error: null});
+          this.getBlock$.next({response:resp, error: null});
       })
       .catch((err) => {
         this.getBlock$.next({response:null, error: err.message});
       });
     };
+    // MIGHT NEED TO DO ADDITIONAL WORK IN IROHA HELPERS "Protobuf Query: [[query is undefined ]]""
     getEngineReceipts(txHash: Number) {
       this.queries.getEngineReceipts(this.QUERY_OPTIONS, {
         txHash: txHash
       }).then((resp: EngineReceiptsResponse) => {
-          this.getEngineReceipts$.next({response:returnJSON(resp), error: null});
+          this.getEngineReceipts$.next({response:resp, error: null});
       })
       .catch((err) => {
         this.getEngineReceipts$.next({response:null, error: err.message});
       });
     };
+      // NEED can_get_peers PERMISSION
     getPeers() {
       this.queries.getPeers(this.QUERY_OPTIONS
       ).then((resp: PeersResponse) => {
@@ -165,7 +169,7 @@ class QueriesController {
       this.queries.getRawAccount(this.QUERY_OPTIONS, {
         accountId: accountId
       }).then((resp: AccountResponse) => {
-          this.getRawAccount$.next({response:returnJSON(resp.account?.jsonData), error: null});
+          this.getRawAccount$.next({response:resp, error: null});
       })
       .catch((err) => {
         this.getRawAccount$.next({response:null, error: err.message});
@@ -179,11 +183,11 @@ class QueriesController {
         this.getRawPendingTransactions$.next({response:null, error: err.message});
       });
     };
-    getRolePermissions(roleId: Number) {
+    getRolePermissions(roleId: string) {
       this.queries.getRolePermissions(this.QUERY_OPTIONS, {
         roleId: roleId
       }).then((resp: RolePermissionsResponse) => {
-          this.getRolePermissions$.next({response:returnJSON(resp.permissions), error: null});
+          this.getRolePermissions$.next({response:resp, error: null});
       })
       .catch((err) => {
         this.getRolePermissions$.next({response:null, error: err.message});
@@ -191,7 +195,7 @@ class QueriesController {
     };
     getRoles() {
       this.queries.getRoles(this.QUERY_OPTIONS).then((resp: RolesResponse) => {
-          this.getRoles$.next({response:returnJSON(resp.roles), error: null});
+          this.getRoles$.next({response:resp, error: null});
       })
       .catch((err) => {
         this.getRoles$.next({response:null, error: err.message});
@@ -201,7 +205,7 @@ class QueriesController {
       this.queries.getSignatories(this.QUERY_OPTIONS, {
         accountId: accountId
       }).then((resp: SignatoriesResponse) => {
-          this.getSignatories$.next({response:returnJSON(resp.keys), error: null});
+          this.getSignatories$.next({response:resp, error: null});
       })
       .catch((err) => {
         this.getSignatories$.next({response:null, error: err.message});
@@ -211,7 +215,7 @@ class QueriesController {
       this.queries.getTransactions(this.QUERY_OPTIONS, {
         txHashesList: txHashesList
       }).then((resp: TransactionsResponse) => {
-          this.getTransactions$.next({response:returnJSON(resp.transactions), error: null});
+          this.getTransactions$.next({response:resp.transactions, error: null});
       })
       .catch((err) => {
         this.getTransactions$.next({response:null, error: err.message});
