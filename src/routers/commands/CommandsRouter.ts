@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import { filter } from 'rxjs/operators'
 import CommandsController from '../../controllers/CommandsController';
+import { AddAssetQuantityRequest } from '../../interfaces/iroha/CommandRequests';
 
 class CommandsRouter {
   private _router = Router();
@@ -77,24 +78,21 @@ class CommandsRouter {
 
   // COMMANDS
 
-  private async _addAssetQuantity() {
-    await this._router.post('/addAssetQuantity', (req: Request, res: Response, next: NextFunction) => {
-      var callBackflag = false;
-      this._controller.addAssetQuantity(this.assetId, this.amount);
-      this._controller.addAssetQuantity$.pipe(filter(response => !!response 
-        && !callBackflag
-        )).subscribe(response => {
-        callBackflag = true;
-        !!response.response
-        ? res.status(200).json(response.response)
-        : res.status(500).json(response.error);
-        // req.connection.end
-      });
-      // console.log('complete: '+req.connection.end);
+  private _addAssetQuantity() {
+    this._router.post('/addAssetQuantity',  (req: Request, res: Response, next: NextFunction) => {
+      let addAssetQuantityRequest = new AddAssetQuantityRequest;
+      addAssetQuantityRequest = req.body;
+      console.log("Incoming request for command *addAssetQuantity*::: %s",addAssetQuantityRequest);
       
-      // return;
+       this._controller.addAssetQuantity(addAssetQuantityRequest)
+        .then(irohaResponse => {
+          if (irohaResponse.status === 'COMMITTED') {
+            res.status(200).json(irohaResponse);
+          } else {
+            res.status(500).json(irohaResponse);
+          }
+        });      
     });
-    // return;
   }
 
   private async _addPeer() {

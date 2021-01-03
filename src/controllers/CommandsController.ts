@@ -5,10 +5,10 @@ import {
   import commandsInit from 'iroha-helpers-ts/lib/commands/index';
 import { escapeJSON, returnJSON } from '../utils/utils';
 import { BehaviorSubject } from 'rxjs';
+import { CommandErrorResponse, CommandResponse } from '../interfaces/iroha/CommandRequests';
 class CommandsController {
 
     // COMMANDS
-    addAssetQuantity$ = new BehaviorSubject<any>(null);
     addPeer$ = new BehaviorSubject<any>(null);
     addSignatory$ = new BehaviorSubject<any>(null);
     appendRole$ = new BehaviorSubject<any>(null);
@@ -42,20 +42,23 @@ class CommandsController {
     };
 
       // COMMANDS
-    addAssetQuantity(assetId: String, amount: String){
-        this.commands.addAssetQuantity(this.COMMAND_OPTIONS,{
-              assetId: assetId,
-              amount: amount
-            })
-          .then((resp: any) => {
-            console.log('addAssetTxId: '+JSON.stringify(resp));
-            
+    addAssetQuantity(addAssetQuantityRequest: any): Promise<any> {
+      console.log(addAssetQuantityRequest);
+      return this.commands.addAssetQuantity(this.COMMAND_OPTIONS, addAssetQuantityRequest)
+        .then((resp: any) => {
+          let commandResponse = new CommandResponse();
+          commandResponse = resp;
+          console.log("sending command response for addAssetQuantity ::", commandResponse);
+          return commandResponse;
+        })
+        .catch((err) => {
+          let commandErrorResponse = new CommandErrorResponse();
+          commandErrorResponse.error = err.message;
+          commandErrorResponse.status = err.message.split("actual=")[1];
 
-              this.addAssetQuantity$.next({response:resp, error: null});
-          })
-          .catch((err) => {
-              this.addAssetQuantity$.next({response: null, error: err.message});
-            });
+          console.log('Received error while sending command: ' + commandErrorResponse);
+          return commandErrorResponse;
+        });
     };
 
     addPeer(address: String, peerKey: String){
