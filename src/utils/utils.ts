@@ -1,11 +1,9 @@
+import { CommandErrorResponse, CommandSuccessResponse } from "../interfaces/iroha/CommandResponses";
+
 export class utils {
-    
-    constructor(){
-        
-    }
-
-
+    constructor(){}
 }
+
 export function escapeJSON(request: any){
     var myJSONString = JSON.stringify(request);
     var searchVal = /("|“|”)/g;
@@ -30,3 +28,19 @@ export function returnJSON(request: any){
     )
     return myEscapedJSONString;
 };
+
+export function setIrohaSuccessResp(resp: CommandSuccessResponse){
+    let commandSuccessResponse = new CommandSuccessResponse();
+    commandSuccessResponse = resp;
+    console.log("sending command response for addAssetQuantity ::\n", commandSuccessResponse);
+    return commandSuccessResponse;  
+}
+
+export function setIrohaErrorResp(err: any){
+    let commandErrorResponse = new CommandErrorResponse();
+    commandErrorResponse.error = err.message;
+    commandErrorResponse.status = err.message.split("actual=")[1];
+
+    console.log('Received error while sending command: ', commandErrorResponse);
+    return commandErrorResponse;          
+}

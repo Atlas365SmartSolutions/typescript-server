@@ -1,7 +1,10 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import { filter } from 'rxjs/operators'
 import CommandsController from '../../controllers/CommandsController';
-import { AddAssetQuantityRequest } from '../../interfaces/iroha/CommandRequests';
+import { AdjustAssetQuantityRequest, AddPeerRequest, AddSignatoryRequest, AppendRoleRequest, CompareAndSetAccountDetailRequest, CreateAccountRequest, CreateAssetRequest, CreateDomainRequest, CreateRoleRequest, DetachRoleRequest, GrantablePermissionRequest, RemovePeerRequest, RemoveSignatoryRequest, RevokePermissionRequest, SetAccountDetailRequest, SetAccountQuorumRequest, TransferAssetRequest } from '../../interfaces/iroha/CommandRequests';
+import  cryptoHelper from 'iroha-helpers-ts/lib/cryptoHelper';
+import { create } from 'domain';
+import { GrantablePermission } from 'iroha-helpers-ts/lib/proto/primitive_pb';
 
 class CommandsRouter {
   private _router = Router();
@@ -78,9 +81,9 @@ class CommandsRouter {
 
   // COMMANDS
 
-  private _addAssetQuantity() {
+  private async _addAssetQuantity() {
     this._router.post('/addAssetQuantity',  (req: Request, res: Response, next: NextFunction) => {
-      let addAssetQuantityRequest = new AddAssetQuantityRequest;
+      let addAssetQuantityRequest = new AdjustAssetQuantityRequest;
       addAssetQuantityRequest = req.body;
       console.log("Incoming request for command *addAssetQuantity* ::: %s",addAssetQuantityRequest);
       
@@ -94,225 +97,305 @@ class CommandsRouter {
         });      
     });
   }
-
+  //TODO:: FIX THIS COMMAND
   private async _addPeer() {
     this._router.post('/addPeer', (req: Request, res: Response, next: NextFunction) => {
-      var callBackflag = false;
-      this._controller.addPeer(this.address, this.peerKey);
-      this._controller.addPeer$.pipe(filter(response => !!response && !callBackflag)).subscribe(response => {
-        callBackflag = true;
-        !!response.response
-        ? res.status(200).json(response.response)
-        : res.status(500).json(response.error);
-      });
+      let addPeerRequest = new AddPeerRequest;
+      let keyPair = cryptoHelper.generateKeyPair();
+      addPeerRequest.address = req.body.address;
+      addPeerRequest.peerKey = keyPair.publicKey;
+      console.log("Incoming request for command *addPeer* ::: %s",addPeerRequest);
+
+      this._controller.addPeer(addPeerRequest)
+        .then(irohaResponse => {
+          if (irohaResponse.status === 'COMMITTED') {
+            res.status(200).json(irohaResponse);
+          } else {
+            res.status(500).json(irohaResponse);
+          }
+      });   
     });
   }
+  //END TODO::
 
+  //TODO:: FIX THIS COMMAND
   private async _addSignatory() {
     await this._router.post('/addSignatory', (req: Request, res: Response, next: NextFunction) => {
-      var callBackflag = false;
-      this._controller.addSignatory(this.address, this.publicKey);
-      this._controller.addSignatory$.pipe(filter(response => !!response && !callBackflag)).subscribe(response => {
-        callBackflag = true;
-        !!response.response
-        ? res.status(200).json(response.response)
-        : res.status(500).json(response.error);
+      let addSignatoryRequest = new AddSignatoryRequest;
+      let keyPair = cryptoHelper.generateKeyPair();
+      addSignatoryRequest.accountId = req.body.accountId;
+      addSignatoryRequest.publicKey = keyPair.publicKey;
+      console.log("Incoming request for command *addSignatory* ::: %s",addSignatoryRequest);
+
+
+      this._controller.addSignatory(addSignatoryRequest)
+        .then(irohaResponse => {
+          if (irohaResponse.status === 'COMMITTED') {
+            res.status(200).json(irohaResponse);
+          } else {
+            res.status(500).json(irohaResponse);
+          }
       });
+
     });
   }
+  //END TODO::
 
   private async _appendRole() {
     await this._router.post('/appendRole', (req: Request, res: Response, next: NextFunction) => {
-      var callBackflag = false;
-      this._controller.appendRole(this.accountId, this.roleName);
-      this._controller.appendRole$.pipe(filter(response => !!response && !callBackflag)).subscribe(response => {
-        callBackflag = true;
-        !!response.response
-        ? res.status(200).json(response.response)
-        : res.status(500).json(response.error);
+      let appendRoleRequest = new AppendRoleRequest;
+      appendRoleRequest = req.body;
+      console.log("Incoming request for command *appendRole* ::: %s",appendRoleRequest);
+
+      this._controller.appendRole(appendRoleRequest)
+        .then(irohaResponse => {
+          if (irohaResponse.status === 'COMMITTED') {
+            res.status(200).json(irohaResponse);
+          } else {
+            res.status(500).json(irohaResponse);
+          }
       });
     });
   }
 
   private async _compareAndSetAccountDetail() {
     await this._router.post('/compareAndSetAccountDetail', (req: Request, res: Response, next: NextFunction) => {
-      var callBackflag = false;
-      this._controller.compareAndSetAccountDetail(this.accountId,this.key, this.value, this.oldValue);
-      this._controller.compareAndSetAccountDetail$.pipe(filter(response => !!response && !callBackflag)).subscribe(response => {
-        callBackflag = true;
-        !!response.response
-        ? res.status(200).json(response.response)
-        : res.status(500).json(response.error);
-      });
+      let compareAndSetAccountDetailRequest = new CompareAndSetAccountDetailRequest;
+      compareAndSetAccountDetailRequest = req.body;
+      console.log("Incoming request for command *compareAndSetAccountDetail* ::: %s",compareAndSetAccountDetailRequest);
+
+      this._controller.compareAndSetAccountDetail(compareAndSetAccountDetailRequest)
+        .then(irohaResponse => {
+          if (irohaResponse.status === 'COMMITTED') {
+            res.status(200).json(irohaResponse);
+          } else {
+            res.status(500).json(irohaResponse);
+          }
+        });
     });
   }
 
   private async _createAccount() {
     await this._router.post('/createAccount', (req: Request, res: Response, next: NextFunction) => {
-      var callBackflag = false;
-      this._controller.createAccount(this.accountName, this.domainId, this.publicKey);
-      this._controller.createAccount$.pipe(filter(response => !!response && !callBackflag)).subscribe(response => {
-        callBackflag = true;
-        !!response.response
-        ? res.status(200).json(response.response)
-        : res.status(500).json(response.error);
+      let createAccountRequest = new CreateAccountRequest;
+      createAccountRequest = req.body;
+      console.log("Incoming request for command *createAccount* ::: %s",createAccountRequest);
+
+      this._controller.createAccount(createAccountRequest)
+        .then(irohaResponse => {
+          if (irohaResponse.status === 'COMMITTED') {
+            res.status(200).json(irohaResponse);
+          } else {
+            res.status(500).json(irohaResponse);
+          }
       });
     });
   }
 
   private async _createAsset() {
-  await this._router.post('/createAsset', (req: Request, res: Response, next: NextFunction) => {
-    var callBackflag = false;
-      this._controller.createAsset(this.assetName, this.domainId, this.percision);
-      this._controller.createAsset$.pipe(filter(response => !!response && !callBackflag)).subscribe(response => {
-        callBackflag = true;
-        !!response.response
-        ? res.status(200).json(response.response)
-        : res.status(500).json(response.error);
+    await this._router.post('/createAsset', (req: Request, res: Response, next: NextFunction) => {
+      let createAssetRequest = new CreateAssetRequest;
+      createAssetRequest = req.body;
+      console.log("Incoming request for command *createAsset* ::: %s",createAssetRequest);
+
+      this._controller.createAsset(createAssetRequest)
+        .then(irohaResponse => {
+          if (irohaResponse.status === 'COMMITTED') {
+            res.status(200).json(irohaResponse);
+          } else {
+            res.status(500).json(irohaResponse);
+          }
       });
     });
   }
 
   private async _createDomain() {
     await this._router.post('/createDomain', (req: Request, res: Response, next: NextFunction) => {
-      var callBackflag = false;
-      this._controller.createDomain(this.domainId, this.defaultRole);
-      this._controller.createDomain$.pipe(filter(response => !!response && !callBackflag)).subscribe(response => {
-        callBackflag = true;
-        !!response.response
-        ? res.status(200).json(response.response)
-        : res.status(500).json(response.error);
+      let createDomainRequest = new CreateDomainRequest;
+      createDomainRequest = req.body;
+      console.log("Incoming request for command *createDomain* ::: %s",createDomainRequest);
+
+      this._controller.createDomain(createDomainRequest)
+        .then(irohaResponse => {
+          if (irohaResponse.status === 'COMMITTED') {
+            res.status(200).json(irohaResponse);
+          } else {
+            res.status(500).json(irohaResponse);
+          }
       });
     });
   }
 
+  //TODO:: FIX THIS COMMAND
   private async _createRole() {
     await this._router.post('/createRole', (req: Request, res: Response, next: NextFunction) => {
-      var callBackflag = false;
-      this._controller.createRole(this.roleName, this.permissionList);
-      this._controller.createRole$.pipe(filter(response => !!response && !callBackflag)).subscribe(response => {
-        callBackflag = true;
-        !!response.response
-        ? res.status(200).json(response.response)
-        : res.status(500).json(response.error);
+      let createRoleRequest = new CreateRoleRequest;
+      createRoleRequest = req.body;
+      console.log("Incoming request for command *createRole* ::: %s",createRoleRequest);
+      
+      this._controller.createRole(createRoleRequest)
+        .then(irohaResponse => {
+          if (irohaResponse.status === 'COMMITTED') {
+            res.status(200).json(irohaResponse);
+          } else {
+            res.status(500).json(irohaResponse);
+          }
       });
     });
   }
-
+  //END TODO::
   private async _detachRole() {
     await this._router.post('/detachRole', (req: Request, res: Response, next: NextFunction) => {
-      var callBackflag = false;
-      this._controller.detachRole(this.accountId, this.roleName);
-      this._controller.detachRole$.pipe(filter(response => !!response && !callBackflag)).subscribe(response => {
-        callBackflag = true;
-        !!response.response
-        ? res.status(200).json(response.response)
-        : res.status(500).json(response.error);
+      let detachRoleRequest = new DetachRoleRequest;
+      detachRoleRequest = req.body;
+      console.log("Incoming request for command *detachRole* ::: %s",detachRoleRequest);
+
+      this._controller.detachRole(detachRoleRequest)
+        .then(irohaResponse => {
+          if (irohaResponse.status === 'COMMITTED') {
+            res.status(200).json(irohaResponse);
+          } else {
+            res.status(500).json(irohaResponse);
+          }
       });
     });
   }
 
+  //TODO:: FIX THIS COMMAND
   private async _grantPermission() {
     await this._router.post('/grantPermission', (req: Request, res: Response, next: NextFunction) => {
-      var callBackflag = false;
-      this._controller.grantPermission(this.accountId, this.permission);
-      this._controller.grantPermission$.pipe(filter(response => !!response && !callBackflag)).subscribe(response => {
-        callBackflag = true;
-        !!response.response
-        ? res.status(200).json(response.response)
-        : res.status(500).json(response.error);
+      let grantablePermissionRequest = new GrantablePermissionRequest;
+      grantablePermissionRequest = req.body;
+      console.log("Incoming request for command *grantPermission* ::: %s",grantablePermissionRequest);
+
+      this._controller.grantPermission(grantablePermissionRequest)
+        .then(irohaResponse => {
+          if (irohaResponse.status === 'COMMITTED') {
+            res.status(200).json(irohaResponse);
+          } else {
+            res.status(500).json(irohaResponse);
+          }
       });
     });
   }
+  //END TODO::
 
   private async _removePeer() {
-  await this._router.post('/removePeer', (req: Request, res: Response, next: NextFunction) => {
-      var callBackflag = false;
-      this._controller.removePeer(this.publicKey);
-      this._controller.removePeer$.pipe(filter(response => !!response && !callBackflag)).subscribe(response => {
-        callBackflag = true;
-        !!response.response
-        ? res.status(200).json(response.response)
-        : res.status(500).json(response.error);
-      });
+    await this._router.post('/removePeer', (req: Request, res: Response, next: NextFunction) => {
+      let removePeerRequest = new RemovePeerRequest;
+      removePeerRequest = req.body;
+      console.log("Incoming request for command *removePeer* ::: %s",removePeerRequest);
+
+      this._controller.removePeer(removePeerRequest)
+        .then(irohaResponse => {
+          if (irohaResponse.status === 'COMMITTED') {
+            res.status(200).json(irohaResponse);
+          } else {
+            res.status(500).json(irohaResponse);
+          }
+      });        
     });
   }
 
   private async _removeSignatory() {
     await this._router.post('/removeSignatory', (req: Request, res: Response, next: NextFunction) => {
-      var callBackflag = false;
-      this._controller.removeSignatory(this.accountId, this.publicKey);
-      this._controller.removeSignatory$.pipe(filter(response => !!response && !callBackflag)).subscribe(response => {
-        callBackflag = true;
-        !!response.response
-        ? res.status(200).json(response.response)
-        : res.status(500).json(response.error);
-      });
+      let removeSignatoryRequest = new RemoveSignatoryRequest;
+      removeSignatoryRequest = req.body;
+      console.log("Incoming request for command *removeSignatory* ::: %s",removeSignatoryRequest);
+
+      this._controller.removeSignatory(removeSignatoryRequest)
+        .then(irohaResponse => {
+          if (irohaResponse.status === 'COMMITTED') {
+            res.status(200).json(irohaResponse);
+          } else {
+            res.status(500).json(irohaResponse);
+          }
+      });      
     });
   }
 
   private async _revokePermission() {
     await this._router.post('/revokePermission', (req: Request, res: Response, next: NextFunction) => {
-      var callBackflag = false;
-      this._controller.revokePermission(this.accountId, this.permission);
-      this._controller.revokePermission$.pipe(filter(response => !!response && !callBackflag)).subscribe(response => {
-        callBackflag = true;
-        !!response.response
-        ? res.status(200).json(response.response)
-        : res.status(500).json(response.error);
-      });
+      let revokePermissionRequest = new RevokePermissionRequest;
+      revokePermissionRequest = req.body;
+      console.log("Incoming request for command *revokePermission* ::: %s",revokePermissionRequest);
+
+      this._controller.revokePermission(revokePermissionRequest)
+        .then(irohaResponse => {
+          if (irohaResponse.status === 'COMMITTED') {
+            res.status(200).json(irohaResponse);
+          } else {
+            res.status(500).json(irohaResponse);
+          }
+      });  
     });
   }
 
   private async _setAccountDetail() {
     await this._router.post('/setAccountDetail', (req: Request, res: Response, next: NextFunction) => {
-      var callBackflag = false;
-      this._controller.setAccountDetail(this.accountId, this.batchExtraction);
-      this._controller.setAccountDetail$.pipe(filter(response => !!response && !callBackflag)).subscribe(response => {
-        callBackflag = true;
-        !!response.response
-        ? res.status(200).json(response.response)
-        : res.status(500).json(response.error);
-      });
+      let setAccountDetailRequest = new SetAccountDetailRequest;
+      setAccountDetailRequest = req.body;
+      console.log("Incoming request for command *setAccountDetail* ::: %s",setAccountDetailRequest);
+
+      this._controller.setAccountDetail(setAccountDetailRequest)
+        .then(irohaResponse => {
+          if (irohaResponse.status === 'COMMITTED') {
+            res.status(200).json(irohaResponse);
+          } else {
+            res.status(500).json(irohaResponse);
+          }
+      });  
     });
   }
 
   private async _setAccountQuorum() {
     await this._router.post('/setAccountQuorum', (req: Request, res: Response, next: NextFunction) => {
-      var callBackflag = false;
-      this._controller.setAccountQuorum(this.accountId, this.quorum);
-      this._controller.setAccountQuorum$.pipe(filter(response => !!response && !callBackflag)).subscribe(response => {
-        callBackflag = true;
-        !!response.response
-        ? res.status(200).json(response.response)
-        : res.status(500).json(response.error);
-      });
+      let setAccountQuorumRequest = new SetAccountQuorumRequest;
+      setAccountQuorumRequest = req.body;
+      console.log("Incoming request for command *setAccountQuorum* ::: %s",setAccountQuorumRequest);
+
+      this._controller.setAccountQuorum(setAccountQuorumRequest)
+        .then(irohaResponse => {
+          if (irohaResponse.status === 'COMMITTED') {
+            res.status(200).json(irohaResponse);
+          } else {
+            res.status(500).json(irohaResponse);
+          }
+      });  
     });
   }
 
   private async _subtractAssetQuantity() {
-    await this._router.post('/subtractAssetQuantity', (req: Request, res: Response, next: NextFunction) => {
-      var callBackflag = false;
-      this._controller.subtractAssetQuantity(this.assetId, this.amount);
-      this._controller.subtractAssetQuantity$.pipe(filter(response => !!response && !callBackflag)).subscribe(response => {
-        callBackflag = true;
-        !!response.response
-        ? res.status(200).json(response.response)
-        : res.status(500).json(response.error);
-      });
+    this._router.post('/subtractAssetQuantity',  (req: Request, res: Response, next: NextFunction) => {
+      let subtractAssetQuantityRequest = new AdjustAssetQuantityRequest;
+      subtractAssetQuantityRequest = req.body;
+      console.log("Incoming request for command *subtractAssetQuantity* ::: %s",subtractAssetQuantityRequest);
+      
+       this._controller.subtractAssetQuantity(subtractAssetQuantityRequest)
+        .then(irohaResponse => {
+          if (irohaResponse.status === 'COMMITTED') {
+            res.status(200).json(irohaResponse);
+          } else {
+            res.status(500).json(irohaResponse);
+          }
+        });      
     });
   }
 
   private async _transferAsset() {
     await this._router.post('/transferAsset', (req: Request, res: Response, next: NextFunction) => {
-      var callBackflag = false;
-      this._controller.transferAsset(this.srcAccountId, this.destAccountId, this.assetId, this.description, this.amount);
-      this._controller.transferAsset$.pipe(filter(response => !!response && !callBackflag)).subscribe(response => {
-        callBackflag = true;
-        !!response.response
-        ? res.status(200).json(response.response)
-        : res.status(500).json(response.error);
-      });
+      let transferAssetRequest = new TransferAssetRequest;
+      transferAssetRequest = req.body;
+      console.log("Incoming request for command *transferAsset* ::: %s",transferAssetRequest);
+      
+      this._controller.transferAsset(transferAssetRequest)
+        .then(irohaResponse => {
+          if (irohaResponse.status === 'COMMITTED') {
+            res.status(200).json(irohaResponse);
+          } else {
+            res.status(500).json(irohaResponse);
+          }
+        });  
     });
   }
 }

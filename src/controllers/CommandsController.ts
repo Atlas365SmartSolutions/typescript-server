@@ -2,32 +2,14 @@ import grpc from 'grpc';
 import {
     CommandService_v1Client as CommandService
   } from 'iroha-helpers-ts/lib/proto/endpoint_grpc_pb';
-  import commandsInit from 'iroha-helpers-ts/lib/commands/index';
-import { escapeJSON, returnJSON } from '../utils/utils';
-import { BehaviorSubject } from 'rxjs';
-import { CommandErrorResponse, CommandSuccessResponse } from '../interfaces/iroha/CommandResponses';
+import commandsInit from 'iroha-helpers-ts/lib/commands/index';
+import { setIrohaErrorResp, setIrohaSuccessResp } from '../utils/utils';
+import { AdjustAssetQuantityRequest, AddPeerRequest, AddSignatoryRequest, AppendRoleRequest, CompareAndSetAccountDetailRequest, CreateAccountRequest, CreateAssetRequest, CreateDomainRequest, CreateRoleRequest, DetachRoleRequest, GrantablePermissionRequest, RemovePeerRequest, RemoveSignatoryRequest, RevokePermissionRequest, SetAccountDetailRequest, SetAccountQuorumRequest, TransferAssetRequest } from '../interfaces/iroha/CommandRequests';
+
 
 class CommandsController {
 
-    // COMMANDS
-    addPeer$ = new BehaviorSubject<any>(null);
-    addSignatory$ = new BehaviorSubject<any>(null);
-    appendRole$ = new BehaviorSubject<any>(null);
-    compareAndSetAccountDetail$ = new BehaviorSubject<any>(null);
-    createAccount$ = new BehaviorSubject<any>(null);
-    createAsset$ = new BehaviorSubject<any>(null);
-    createDomain$ = new BehaviorSubject<any>(null);
-    createRole$ = new BehaviorSubject<any>(null);
-    detachRole$ = new BehaviorSubject<any>(null);
-    grantPermission$ = new BehaviorSubject<any>(null);
-    removePeer$ = new BehaviorSubject<any>(null);
-    removeSignatory$ = new BehaviorSubject<any>(null);
-    revokePermission$ = new BehaviorSubject<any>(null);
-    setAccountDetail$ = new BehaviorSubject<any>(null);
-    setAccountQuorum$ = new BehaviorSubject<any>(null);
-    subtractAssetQuantity$ = new BehaviorSubject<any>(null);
-    transferAsset$ = new BehaviorSubject<any>(null);
-    
+    // COMMANDS    
     private IROHA_ADDRESS = 'localhost:50051';
     private adminAccount = 'admin@test';
     private commandService = new CommandService(this.IROHA_ADDRESS,grpc.credentials.createInsecure());
@@ -43,236 +25,189 @@ class CommandsController {
     };
 
       // COMMANDS
-    addAssetQuantity(addAssetQuantityRequest: any): Promise<any> {
-      console.log(addAssetQuantityRequest);
+    addAssetQuantity(addAssetQuantityRequest: AdjustAssetQuantityRequest): Promise<any> {
       return this.commands.addAssetQuantity(this.COMMAND_OPTIONS, addAssetQuantityRequest)
         .then((resp: any) => {
-          let commandSuccessResponse = new CommandSuccessResponse();
-          commandSuccessResponse = resp;
-          console.log("sending command response for addAssetQuantity ::\n", commandSuccessResponse);
-          return commandSuccessResponse;
+          return setIrohaSuccessResp(resp);      
         })
         .catch((err) => {
-          let commandErrorResponse = new CommandErrorResponse();
-          commandErrorResponse.error = err.message;
-          commandErrorResponse.status = err.message.split("actual=")[1];
+          return setIrohaErrorResp(err);          
+        });
+    };
+    //TODO:: FIX THIS COMMAND
+    addPeer(addPeerRequest: AddPeerRequest): Promise<any>{
+      return this.commands.addPeer(this.COMMAND_OPTIONS, addPeerRequest)
+        .then((resp: any) => {
+          return setIrohaSuccessResp(resp);      
+        })
+        .catch((err) => {
+          return setIrohaErrorResp(err);          
+        });
+    };
+    //END TODO
 
-          console.log('Received error while sending command: ' + commandErrorResponse);
-          return commandErrorResponse;
+    //TODO:: FIX THIS COMMAND
+    addSignatory(addSignatoryRequest: AddSignatoryRequest): Promise<any> {
+      return this.commands.addSignatory(this.COMMAND_OPTIONS,addSignatoryRequest)
+        .then((resp: any) => {
+          return setIrohaSuccessResp(resp);      
+        })
+        .catch((err) => {
+          return setIrohaErrorResp(err);          
+        });
+    };
+    //END TODO
+
+    appendRole(appendRoleRequest: AppendRoleRequest): Promise<any> {
+      return this.commands.appendRole(this.COMMAND_OPTIONS,appendRoleRequest)
+        .then((resp: any) => {
+          return setIrohaSuccessResp(resp);      
+        })
+        .catch((err) => {
+          return setIrohaErrorResp(err);          
         });
     };
 
-    addPeer(address: String, peerKey: String){
-      this.commands.addPeer(this.COMMAND_OPTIONS,{
-          address: address,
-          peerKey: peerKey
-          })
+    compareAndSetAccountDetail(compareAndSetAccountDetailRequest: CompareAndSetAccountDetailRequest): Promise<any>{
+      return this.commands.compareAndSetAccountDetail(this.COMMAND_OPTIONS, compareAndSetAccountDetailRequest)
         .then((resp: any) => {
-            this.addPeer$.next({response:returnJSON(resp), error: null});
+          return setIrohaSuccessResp(resp);      
         })
         .catch((err) => {
-            this.addPeer$.next({response: null, error: err.message});
-          });
-    };
-    addSignatory(address: String, publicKey: String){
-      this.commands.addSignatory(this.COMMAND_OPTIONS,{
-          address: address,
-          publicKey: publicKey
-        })
-      .then((resp: any) => {
-            this.addSignatory$.next({response:returnJSON(resp), error: null});
-      })
-      .catch((err) => {
-          this.addSignatory$.next({response: null, error: err.message});
+          return setIrohaErrorResp(err);          
         });
     };
-    appendRole(accountId: String, roleName: String){
-      this.commands.appendRole(this.COMMAND_OPTIONS,{
-            accountId: accountId,
-            roleName: roleName
-          })
+
+    createAccount(createAccountRequest: CreateAccountRequest): Promise<any> {
+      return this.commands.createAccount(this.COMMAND_OPTIONS, createAccountRequest)
         .then((resp: any) => {
-            this.appendRole$.next({response:returnJSON(resp), error: null});
+          return setIrohaSuccessResp(resp);      
         })
         .catch((err) => {
-            this.appendRole$.next({response: null, error: err.message});
-          });
+          return setIrohaErrorResp(err);          
+        });
     };
-    compareAndSetAccountDetail(accountId: any, key: any, value: any, oldValue: any){
-      this.commands.compareAndSetAccountDetail(this.COMMAND_OPTIONS, {
-        accountId: accountId,
-        key: key,
-        value: value,
-        oldValue: oldValue,
-    })
+
+    createAsset(createAssetRequest: CreateAssetRequest): Promise<any>{
+      return this.commands.createAsset(this.COMMAND_OPTIONS, createAssetRequest)
         .then((resp: any) => {
-            this.compareAndSetAccountDetail$.next({response:returnJSON(resp), error: null});
+          return setIrohaSuccessResp(resp);      
         })
         .catch((err) => {
-            this.compareAndSetAccountDetail$.next({response: null, error: err.message});
-          });
+          return setIrohaErrorResp(err);          
+        });
     };
-    createAccount(accountName: String, domainId: String, publicKey: String){
-      this.commands.createAccount(this.COMMAND_OPTIONS, {
-        accountName: accountName,
-        domainId: domainId,
-        publicKey: publicKey
-    })
+
+    createDomain(createDomainRequest: CreateDomainRequest): Promise<any>{
+      return this.commands.createDomain(this.COMMAND_OPTIONS, createDomainRequest)
         .then((resp: any) => {
-            this.createAccount$.next({response:returnJSON(resp), error: null});
+          return setIrohaSuccessResp(resp);      
         })
         .catch((err) => {
-            this.createAccount$.next({response: null, error: err.message});
-          });
+          return setIrohaErrorResp(err);          
+        });
     };
-    createAsset(assetName: String, domainId: String, precision: Number){
-      this.commands.createAsset(this.COMMAND_OPTIONS, {
-        assetName: assetName,
-        domainId: domainId,
-        precision: precision
-    })
+
+    createRole(createRoleRequest: CreateRoleRequest): Promise<any>{
+      return this.commands.createRole(this.COMMAND_OPTIONS, createRoleRequest)
         .then((resp: any) => {
-            this.createAccount$.next({response:returnJSON(resp), error: null});
+          return setIrohaSuccessResp(resp);      
         })
         .catch((err) => {
-            this.createAccount$.next({response: null, error: err.message});
-          });
+          return setIrohaErrorResp(err);          
+        });
     };
-    createDomain(domainId: String, defaultRole: String){
-      this.commands.createDomain(this.COMMAND_OPTIONS, {
-        domainId: domainId,
-        defaultRole: defaultRole
-    })
+
+    detachRole(detachRoleRequest: DetachRoleRequest): Promise<any>{
+      return this.commands.detachRole(this.COMMAND_OPTIONS, detachRoleRequest)
         .then((resp: any) => {
-            this.createDomain$.next({response:returnJSON(resp), error: null});
+          return setIrohaSuccessResp(resp);      
         })
         .catch((err) => {
-            this.createDomain$.next({response: null, error: err.message});
-          });
+          return setIrohaErrorResp(err);          
+        });
     };
-    createRole(roleName: String, permissionsList: Array<Number>){
-      this.commands.createRole(this.COMMAND_OPTIONS, {
-        roleName: roleName,
-        permissionsList: permissionsList
-    })
+
+    grantPermission(grantablePermissionRequest: GrantablePermissionRequest){
+      return this.commands.grantPermission(this.COMMAND_OPTIONS, grantablePermissionRequest)
         .then((resp: any) => {
-            this.createRole$.next({response:returnJSON(resp), error: null});
+          return setIrohaSuccessResp(resp);      
         })
         .catch((err) => {
-            this.createRole$.next({response: null, error: err.message});
-          });
+          return setIrohaErrorResp(err);          
+        });
     };
-    detachRole(accountId: String, roleName: String){
-      this.commands.detachRole(this.COMMAND_OPTIONS, {
-        accountId: accountId,
-        roleName: roleName
-    })
+
+    removePeer(removePeerRequest: RemovePeerRequest): Promise<any>{
+      return this.commands.removePeer(this.COMMAND_OPTIONS, removePeerRequest)
         .then((resp: any) => {
-            this.detachRole$.next({response:returnJSON(resp), error: null});
+          return setIrohaSuccessResp(resp);      
         })
         .catch((err) => {
-            this.detachRole$.next({response: null, error: err.message});
-          });
+          return setIrohaErrorResp(err);          
+        });
     };
-    grantPermission(accountId: String, permission: String){
-      this.commands.grantPermission(this.COMMAND_OPTIONS, {
-        accountId: accountId,
-        permission: permission
-    })
+
+    removeSignatory(removeSignatoryRequest: RemoveSignatoryRequest): Promise<any>{
+      return this.commands.removeSignatory(this.COMMAND_OPTIONS, removeSignatoryRequest)
         .then((resp: any) => {
-            this.grantPermission$.next({response:returnJSON(resp), error: null});
+          return setIrohaSuccessResp(resp);      
         })
         .catch((err) => {
-            this.grantPermission$.next({response: null, error: err.message});
-          });
+          return setIrohaErrorResp(err);          
+        });
     };
-    removePeer(publicKey: String){
-      this.commands.removePeer(this.COMMAND_OPTIONS, {
-        publicKey: publicKey
-    })
+
+    revokePermission(revokePermissionRequest: RevokePermissionRequest): Promise<any> {
+      return this.commands.revokePermission(this.COMMAND_OPTIONS, revokePermissionRequest)
         .then((resp: any) => {
-            this.removePeer$.next({response:returnJSON(resp), error: null});
+          return setIrohaSuccessResp(resp);      
         })
         .catch((err) => {
-            this.removePeer$.next({response: null, error: err.message});
-          });
+          return setIrohaErrorResp(err);          
+        });
     };
-    removeSignatory(accountId: String, publicKey: String){
-      this.commands.removeSignatory(this.COMMAND_OPTIONS, {
-        accountId: accountId,
-        publicKey: publicKey
-    })
+
+    setAccountDetail(setAccountDetailRequest: SetAccountDetailRequest): Promise<any>{
+      return this.commands.setAccountDetail(this.COMMAND_OPTIONS,setAccountDetailRequest)
         .then((resp: any) => {
-            this.removeSignatory$.next({response:returnJSON(resp), error: null});
+          return setIrohaSuccessResp(resp);      
         })
         .catch((err) => {
-            this.removeSignatory$.next({response: null, error: err.message});
-          });
+          return setIrohaErrorResp(err);          
+        });
     };
-    revokePermission(accountId: String, permission: String){
-      this.commands.revokePermission(this.COMMAND_OPTIONS, {
-        accountId: accountId,
-        permission: permission
-    })
+    
+    setAccountQuorum(setAccountQuorumRequest: SetAccountQuorumRequest): Promise<any>{
+      return this.commands.setAccountQuorum(this.COMMAND_OPTIONS,setAccountQuorumRequest)
         .then((resp: any) => {
-            this.revokePermission$.next({response:returnJSON(resp), error: null});
+          return setIrohaSuccessResp(resp);      
         })
         .catch((err) => {
-            this.revokePermission$.next({response: null, error: err.message});
-          });
+          return setIrohaErrorResp(err);          
+        });
     };
-    setAccountDetail(accountId: any, req: any){
-          this.commands.setAccountDetail(this.COMMAND_OPTIONS,{
-              accountId: accountId,
-              key: req.batchRequest.batchId,
-              value: escapeJSON(req)
-            })
-          .then((resp: any) => {
-                this.setAccountDetail$.next({response:returnJSON(resp), error: null});
-          })
-          .catch((err) => {
-              this.setAccountDetail$.next({response: null, error: err.message});
-            });
-    };
-    setAccountQuorum(accountId: String, quorum: Number){
-      this.commands.setAccountQuorum(this.COMMAND_OPTIONS,{
-            accountId: accountId,
-            quorum: quorum
-          })
+
+    subtractAssetQuantity(subtractAssetQuantityRequest: AdjustAssetQuantityRequest): Promise<any>{
+      return this.commands.subtractAssetQuantity(this.COMMAND_OPTIONS,subtractAssetQuantityRequest)
         .then((resp: any) => {
-            this.setAccountQuorum$.next({response:returnJSON(resp), error: null});
+          return setIrohaSuccessResp(resp);      
         })
         .catch((err) => {
-            this.setAccountQuorum$.next({response: null, error: err.message});
-          });
+          return setIrohaErrorResp(err);          
+        });
     };
-    subtractAssetQuantity(assetId: String, amount: String){
-      this.commands.subtractAssetQuantity(this.COMMAND_OPTIONS,{
-            assetId: assetId,
-            amount: amount
-          })
+
+    transferAsset(transferAssetRequest: TransferAssetRequest): Promise<any>{
+      return this.commands.transferAsset(this.COMMAND_OPTIONS,transferAssetRequest)
         .then((resp: any) => {
-            this.subtractAssetQuantity$.next({response:returnJSON(resp), error: null});
+          return setIrohaSuccessResp(resp);      
         })
         .catch((err) => {
-            this.subtractAssetQuantity$.next({response: null, error: err.message});
-          });
+          return setIrohaErrorResp(err);          
+        });
     };
-    transferAsset(srcAccountId: String, destAccountId: String, assetId: String, description: String, amount: String){
-      this.commands.transferAsset(this.COMMAND_OPTIONS,{
-            srcAccountId: srcAccountId,
-            destAccountId: destAccountId,
-            assetId: assetId,
-            description: description,
-            amount: amount
-          })
-        .then((resp: any) => {
-            this.transferAsset$.next({response:returnJSON(resp), error: null});
-        })
-        .catch((err) => {
-            this.transferAsset$.next({response: null, error: err.message});
-          });
-    };
+
   }
   
   export = new CommandsController();
