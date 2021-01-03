@@ -82,7 +82,7 @@ class CommandsRouter {
     this._router.post('/addAssetQuantity',  (req: Request, res: Response, next: NextFunction) => {
       let addAssetQuantityRequest = new AddAssetQuantityRequest;
       addAssetQuantityRequest = req.body;
-      console.log("Incoming request for command *addAssetQuantity*::: %s",addAssetQuantityRequest);
+      console.log("Incoming request for command *addAssetQuantity* ::: %s",addAssetQuantityRequest);
       
        this._controller.addAssetQuantity(addAssetQuantityRequest)
         .then(irohaResponse => {
@@ -96,7 +96,7 @@ class CommandsRouter {
   }
 
   private async _addPeer() {
-    await this._router.post('/addPeer', (req: Request, res: Response, next: NextFunction) => {
+    this._router.post('/addPeer', (req: Request, res: Response, next: NextFunction) => {
       var callBackflag = false;
       this._controller.addPeer(this.address, this.peerKey);
       this._controller.addPeer$.pipe(filter(response => !!response && !callBackflag)).subscribe(response => {

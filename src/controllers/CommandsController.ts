@@ -5,7 +5,8 @@ import {
   import commandsInit from 'iroha-helpers-ts/lib/commands/index';
 import { escapeJSON, returnJSON } from '../utils/utils';
 import { BehaviorSubject } from 'rxjs';
-import { CommandErrorResponse, CommandResponse } from '../interfaces/iroha/CommandRequests';
+import { CommandErrorResponse, CommandSuccessResponse } from '../interfaces/iroha/CommandResponses';
+
 class CommandsController {
 
     // COMMANDS
@@ -46,10 +47,10 @@ class CommandsController {
       console.log(addAssetQuantityRequest);
       return this.commands.addAssetQuantity(this.COMMAND_OPTIONS, addAssetQuantityRequest)
         .then((resp: any) => {
-          let commandResponse = new CommandResponse();
-          commandResponse = resp;
-          console.log("sending command response for addAssetQuantity ::", commandResponse);
-          return commandResponse;
+          let commandSuccessResponse = new CommandSuccessResponse();
+          commandSuccessResponse = resp;
+          console.log("sending command response for addAssetQuantity ::\n", commandSuccessResponse);
+          return commandSuccessResponse;
         })
         .catch((err) => {
           let commandErrorResponse = new CommandErrorResponse();
