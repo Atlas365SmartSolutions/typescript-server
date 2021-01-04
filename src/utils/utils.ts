@@ -32,7 +32,7 @@ export function returnJSON(request: any){
 export function setIrohaSuccessResp(resp: CommandSuccessResponse){
     let commandSuccessResponse = new CommandSuccessResponse();
     commandSuccessResponse = resp;
-    console.log("sending command response for addAssetQuantity ::\n", commandSuccessResponse);
+    console.log("sending command response for addAssetQuantity :: %s\n", JSON.stringify(commandSuccessResponse));
     return commandSuccessResponse;  
 }
 

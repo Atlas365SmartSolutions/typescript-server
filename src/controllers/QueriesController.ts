@@ -3,8 +3,7 @@ import {
     QueryService_v1Client as QueryService
   } from 'iroha-helpers-ts/lib/proto/endpoint_grpc_pb';
 import queriesInit from 'iroha-helpers-ts/lib/queries/index';
-import { returnJSON, escapeJSON } from '../utils/utils'
-import { BehaviorSubject } from 'rxjs'
+import { setIrohaErrorResp, setIrohaSuccessResp } from '../utils/utils'
 import { AccountResponse, SignatoriesResponse,
         TransactionsResponse, PendingTransactionsPageResponse,
         TransactionsPageResponse, AccountAssetResponse,
@@ -13,27 +12,11 @@ import { AccountResponse, SignatoriesResponse,
         BlockResponse,
         EngineReceiptsResponse
        } from '../interfaces/Interfaces';
+import { GetAccountAssetsRequest, GetAccountAssetTransactionsRequest, GetAccountDetailRequest, GetAccountRequest, GetAccountTransactionsRequest, GetAssetInfoRequest, GetBlockRequest, GetEngineReceiptsRequest, GetPendingTxsRequest, GetRawAccountRequest, GetRolePermissionsRequest, GetSignatoriesRequest, GetTransactionsRequest } from '../interfaces/iroha/QueryRequests';
 
 class QueriesController {
 
   // QUERIES
-    getAccount$ = new BehaviorSubject<any>(null);
-    getAccountTransactions$ = new BehaviorSubject<any>(null);
-    getAccountAssets$ = new BehaviorSubject<any>(null);
-    getAccountDetail$ = new BehaviorSubject<any>(null);
-    getAccountAssetTransactions$ = new BehaviorSubject<any>(null);
-    getAssetInfo$ = new BehaviorSubject<any>(null);
-    getBlock$ = new BehaviorSubject<any>(null);
-    getEngineReceipts$ = new BehaviorSubject<any>(null);
-    getPeers$ = new BehaviorSubject<any>(null);
-    getPendingTransactions$ = new BehaviorSubject<any>(null);
-    getRawAccount$ = new BehaviorSubject<any>(null);
-    getRawPendingTransactions$ = new BehaviorSubject<any>(null);
-    getRolePermissions$ = new BehaviorSubject<any>(null);
-    getRoles$ = new BehaviorSubject<any>(null);
-    getSignatories$ = new BehaviorSubject<any>(null);
-    getTransactions$ = new BehaviorSubject<any>(null);
-    
     private IROHA_ADDRESS = 'localhost:50051';
     private adminAccount = 'admin@test';
     private queryService = new QueryService(this.IROHA_ADDRESS, grpc.credentials.createInsecure());
@@ -50,176 +33,164 @@ class QueriesController {
     // QUERIES
 
     // TO DO - CHECK IF IT WORKS
-    getAccount(accountId: any) {
-        this.queries.getAccount(this.QUERY_OPTIONS, {
-          accountId: accountId
-        }).then((resp: any) => {
-            this.getAccount$.next({response:resp, error: null});
+    getAccount(getAccountRequest: GetAccountRequest) : Promise<any> {
+      return this.queries.getAccount(this.QUERY_OPTIONS, getAccountRequest)
+        .then((resp: any) => {
+          return setIrohaSuccessResp(resp);      
         })
         .catch((err) => {
-          this.getAccount$.next({response:null, error: err.message});
-        });
-       
+          return setIrohaErrorResp(err);          
+        }); 
     };
-    getAccountTransactions(accountId: String) {
-      this.queries.getAccountTransactions(this.QUERY_OPTIONS, {
-        accountId: accountId,
-        pageSize: 100
-      }).then((resp: TransactionsPageResponse) => {
-          this.getAccountTransactions$.next({response:resp, error: null});
+
+    getAccountTransactions(getAccountTransactionsRequest: GetAccountTransactionsRequest): Promise<any> {
+      return this.queries.getAccountTransactions(this.QUERY_OPTIONS, getAccountTransactionsRequest)
+        .then((resp: any) => {
+          return setIrohaSuccessResp(resp);      
+        })
+        .catch((err) => {
+          return setIrohaErrorResp(err);          
+        }); 
+    };
+
+    getAccountAssets(getAccountAssetsRequest: GetAccountAssetsRequest): Promise<any> {
+      return this.queries.getAccountAssets(this.QUERY_OPTIONS, getAccountAssetsRequest)
+      .then((resp: any) => {
+        return setIrohaSuccessResp(resp);      
       })
       .catch((err) => {
-        this.getAccountTransactions$.next({response:null, error: err.message});
-      });
+        return setIrohaErrorResp(err);          
+      }); 
     };
-    getAccountAssets(accountId: any, assetId: any) {
-      this.queries.getAccountAssets(this.QUERY_OPTIONS, {
-        accountId: accountId,
-        pageSize: 100,
-        firstAssetId: assetId,
-      }).then((resp: AccountAssetResponse) => {
-          this.getAccountAssets$.next({response:returnJSON(resp), error: null});
-      })
-      .catch((err) => {
-        this.getAccountAssets$.next({response:null, error: err.message});
-      });
+    
+    getAccountDetail(getAccountDetailRequest: GetAccountDetailRequest): Promise<any> {
+      return this.queries.getAccountDetail(this.QUERY_OPTIONS, getAccountDetailRequest)
+        .then((resp: any) => {
+          return setIrohaSuccessResp(resp);      
+        })
+        .catch((err) => {
+          return setIrohaErrorResp(err);          
+      }); 
     };
-    getAccountDetail(accountId: any, key: any) {
-      this.queries.getAccountDetail(this.QUERY_OPTIONS, {
-        accountId: accountId,
-        key: key,
-        pageSize: 100,
-        paginationKey: key,
-        paginationWriter: accountId,
-        writer: accountId,
-      }).then((resp: AccountDetailResponse) => {
-          this.getAccountDetail$.next({response:returnJSON(resp), error: null});
-      })
-      .catch((err) => {
-        this.getAccountDetail$.next({response:null, error: err.message});
-      });
-    };
+
     // NEED TO SET UP TRANSACTION
-    getAccountAssetTransactions(accountId: any, assetId: any, firstTxHash: any) {
-      this.queries.getAccountAssetTransactions(this.QUERY_OPTIONS, {
-        accountId: accountId,
-        assetId: assetId,
-        pageSize: 100,
-        firstTxHash: firstTxHash
-      }).then((resp: TransactionsPageResponse) => {
-          this.getAccountAssetTransactions$.next({response:returnJSON(resp), error: null});
-      })
-      .catch((err) => {
-        this.getAccountAssetTransactions$.next({response:null, error: err.message});
-      });
+    getAccountAssetTransactions(getAccountAssetTransactionsRequest: GetAccountAssetTransactionsRequest): Promise<any> {
+      return this.queries.getAccountAssetTransactions(this.QUERY_OPTIONS, getAccountAssetTransactionsRequest)
+        .then((resp: any) => {
+          return setIrohaSuccessResp(resp);      
+        })
+        .catch((err) => {
+          return setIrohaErrorResp(err);          
+      }); 
     };
-    getAssetInfo(assetId: String) {
-      this.queries.getAssetInfo(this.QUERY_OPTIONS, {
-        assetId: assetId
-      }).then((resp: Asset) => {
-          this.getAssetInfo$.next({response:returnJSON(resp), error: null});
-      })
-      .catch((err) => {
-        this.getAssetInfo$.next({response:null, error: err.message});
-      });
+
+    getAssetInfo(getAssetInfoRequest: GetAssetInfoRequest): Promise<any> {
+      return this.queries.getAssetInfo(this.QUERY_OPTIONS, getAssetInfoRequest)
+        .then((resp: any) => {
+          return setIrohaSuccessResp(resp);      
+        })
+        .catch((err) => {
+          return setIrohaErrorResp(err);          
+      }); 
     };
-    getBlock(height: Number) {
-      this.queries.getBlock(this.QUERY_OPTIONS, {
-        height: height
-      }).then((resp: BlockResponse) => {
-          this.getBlock$.next({response:resp, error: null});
-      })
-      .catch((err) => {
-        this.getBlock$.next({response:null, error: err.message});
-      });
+    
+    getBlock(getBlockRequest: GetBlockRequest): Promise<any> {
+      return this.queries.getBlock(this.QUERY_OPTIONS, getBlockRequest)
+        .then((resp: any) => {
+          return setIrohaSuccessResp(resp);      
+        })
+        .catch((err) => {
+          return setIrohaErrorResp(err);          
+      }); 
     };
     // MIGHT NEED TO DO ADDITIONAL WORK IN IROHA HELPERS "Protobuf Query: [[query is undefined ]]""
-    getEngineReceipts(txHash: Number) {
-      this.queries.getEngineReceipts(this.QUERY_OPTIONS, {
-        txHash: txHash
-      }).then((resp: EngineReceiptsResponse) => {
-          this.getEngineReceipts$.next({response:resp, error: null});
-      })
-      .catch((err) => {
-        this.getEngineReceipts$.next({response:null, error: err.message});
-      });
+    getEngineReceipts(getEngineReceiptsRequest: GetEngineReceiptsRequest): Promise<any> {
+      return this.queries.getEngineReceipts(this.QUERY_OPTIONS, getEngineReceiptsRequest)
+        .then((resp: any) => {
+          return setIrohaSuccessResp(resp);      
+        })
+        .catch((err) => {
+          return setIrohaErrorResp(err);          
+      }); 
     };
       // NEED can_get_peers PERMISSION
-    getPeers() {
-      this.queries.getPeers(this.QUERY_OPTIONS
-      ).then((resp: PeersResponse) => {
-          this.getPeers$.next({response:returnJSON(resp.peers), error: null});
-      })
-      .catch((err) => {
-        this.getPeers$.next({response:null, error: err.message});
-      });
+    getPeers(): Promise<any>{
+      return this.queries.getPeers(this.QUERY_OPTIONS)
+        .then((resp: any) => {
+          return setIrohaSuccessResp(resp);      
+        })
+        .catch((err) => {
+          return setIrohaErrorResp(err);          
+      }); 
     };
-    getPendingTransactions(firstTxHash: any) {
-      this.queries.getPendingTransactions(this.QUERY_OPTIONS, {
-        pageSize: 100,
-        firstTxHash: firstTxHash
-      }).then((resp: PendingTransactionsPageResponse) => {
-          this.getPendingTransactions$.next({response:returnJSON(resp), error: null});
-      })
-      .catch((err) => {
-        this.getPendingTransactions$.next({response:null, error: err.message});
-      });
+
+    getPendingTransactions(getPendingTxsRequest: GetPendingTxsRequest): Promise<any> {
+      return this.queries.getPendingTransactions(this.QUERY_OPTIONS, getPendingTxsRequest)
+        .then((resp: any) => {
+          return setIrohaSuccessResp(resp);      
+        })
+        .catch((err) => {
+          return setIrohaErrorResp(err);          
+      }); 
     };
-    getRawAccount(accountId: String) {
-      this.queries.getRawAccount(this.QUERY_OPTIONS, {
-        accountId: accountId
-      }).then((resp: AccountResponse) => {
-          this.getRawAccount$.next({response:resp, error: null});
-      })
-      .catch((err) => {
-        this.getRawAccount$.next({response:null, error: err.message});
-      });
+
+    getRawAccount(getRawAccountRequest: GetRawAccountRequest):Promise<any> {
+      return this.queries.getRawAccount(this.QUERY_OPTIONS, getRawAccountRequest)
+        .then((resp: any) => {
+          return setIrohaSuccessResp(resp);      
+        })
+        .catch((err) => {
+          return setIrohaErrorResp(err);          
+      }); 
     };
-    getRawPendingTransactions() {
-      this.queries.getRawPendingTransactions(this.QUERY_OPTIONS).then((resp: PendingTransactionsPageResponse) => {
-          this.getRawPendingTransactions$.next({response:returnJSON(resp), error: null});
-      })
-      .catch((err) => {
-        this.getRawPendingTransactions$.next({response:null, error: err.message});
-      });
+
+    getRawPendingTransactions():Promise<any> {
+      return this.queries.getRawPendingTransactions(this.QUERY_OPTIONS)
+        .then((resp: any) => {
+          return setIrohaSuccessResp(resp);      
+        })
+        .catch((err) => {
+          return setIrohaErrorResp(err);          
+      }); 
     };
-    getRolePermissions(roleId: string) {
-      this.queries.getRolePermissions(this.QUERY_OPTIONS, {
-        roleId: roleId
-      }).then((resp: RolePermissionsResponse) => {
-          this.getRolePermissions$.next({response:resp, error: null});
-      })
-      .catch((err) => {
-        this.getRolePermissions$.next({response:null, error: err.message});
-      });
+
+    getRolePermissions(getRolePermissionsRequest: GetRolePermissionsRequest): Promise<any> {
+      return this.queries.getRolePermissions(this.QUERY_OPTIONS, getRolePermissionsRequest)
+        .then((resp: any) => {
+          return setIrohaSuccessResp(resp);      
+        })
+        .catch((err) => {
+          return setIrohaErrorResp(err);          
+      }); 
     };
-    getRoles() {
-      this.queries.getRoles(this.QUERY_OPTIONS).then((resp: RolesResponse) => {
-          this.getRoles$.next({response:resp, error: null});
-      })
-      .catch((err) => {
-        this.getRoles$.next({response:null, error: err.message});
-      });
+
+    getRoles(): Promise<any> {
+      return this.queries.getRoles(this.QUERY_OPTIONS)
+        .then((resp: any) => {
+          return setIrohaSuccessResp(resp);      
+        })
+        .catch((err) => {
+          return setIrohaErrorResp(err);          
+      }); 
     };
-    getSignatories(accountId: String) {
-      this.queries.getSignatories(this.QUERY_OPTIONS, {
-        accountId: accountId
-      }).then((resp: SignatoriesResponse) => {
-          this.getSignatories$.next({response:resp, error: null});
-      })
-      .catch((err) => {
-        this.getSignatories$.next({response:null, error: err.message});
-      });
+
+    getSignatories(getSignatoriesRequest: GetSignatoriesRequest): Promise<any> {
+      return this.queries.getSignatories(this.QUERY_OPTIONS, getSignatoriesRequest)
+        .then((resp: any) => {
+          return setIrohaSuccessResp(resp);      
+        })
+        .catch((err) => {
+          return setIrohaErrorResp(err);          
+      }); 
     };
-    getTransactions(txHashesList: Array<String>) {
-      this.queries.getTransactions(this.QUERY_OPTIONS, {
-        txHashesList: txHashesList
-      }).then((resp: TransactionsResponse) => {
-          this.getTransactions$.next({response:resp.transactions, error: null});
-      })
-      .catch((err) => {
-        this.getTransactions$.next({response:null, error: err.message});
-      });
+    getTransactions(getTransactionsRequest: GetTransactionsRequest): Promise<any> {
+      return this.queries.getTransactions(this.QUERY_OPTIONS, getTransactionsRequest)
+        .then((resp: any) => {
+          return setIrohaSuccessResp(resp);      
+        })
+        .catch((err) => {
+          return setIrohaErrorResp(err);          
+      }); 
     };
 
   }
