@@ -1,6 +1,10 @@
 // REQUEST INTERFACE
 export class GetAccountRequest {
     accountId!: string;
+   
+    constructor(accountId: string){
+        this.accountId = accountId;
+    }
 }
 
 export class GetAccountTransactionsRequest {

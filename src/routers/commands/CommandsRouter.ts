@@ -82,7 +82,7 @@ class CommandsRouter {
   // COMMANDS
 
   private async _addAssetQuantity() {
-    this._router.post('/addAssetQuantity',  (req: Request, res: Response, next: NextFunction) => {
+    this._router.post('/addAssetQuantity',  (req: Request, res: Response) => {
       let addAssetQuantityRequest = new AdjustAssetQuantityRequest;
       addAssetQuantityRequest = req.body;
       console.log("Incoming request for command *addAssetQuantity* ::: %s",addAssetQuantityRequest);
@@ -143,7 +143,7 @@ class CommandsRouter {
 
   private async _appendRole() {
     await this._router.post('/appendRole', (req: Request, res: Response, next: NextFunction) => {
-      let appendRoleRequest = new AppendRoleRequest;
+      let appendRoleRequest = new AppendRoleRequest(req.body.accountId, req.body.roleName);
       appendRoleRequest = req.body;
       console.log("Incoming request for command *appendRole* ::: %s",appendRoleRequest);
 
@@ -177,7 +177,7 @@ class CommandsRouter {
 
   private async _createAccount() {
     await this._router.post('/createAccount', (req: Request, res: Response, next: NextFunction) => {
-      let createAccountRequest = new CreateAccountRequest;
+      let createAccountRequest = new CreateAccountRequest(req.body.accountId, this.domainId, req.body.publickey);
       createAccountRequest = req.body;
       console.log("Incoming request for command *createAccount* ::: %s",createAccountRequest);
 

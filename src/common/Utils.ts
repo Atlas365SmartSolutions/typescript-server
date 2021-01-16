@@ -1,4 +1,5 @@
-import { CommandErrorResponse, CommandSuccessResponse } from "../interfaces/iroha/CommandResponses";
+import cryptoHelper from "iroha-helpers-ts/lib/cryptoHelper";
+import { IrohaErrorResponse, IrohaSuccessResponse } from "../interfaces/iroha/IrohaResponses";
 
 export class utils {
     constructor(){}
@@ -29,18 +30,23 @@ export function returnJSON(request: any){
     return myEscapedJSONString;
 };
 
-export function setIrohaSuccessResp(resp: CommandSuccessResponse){
-    let commandSuccessResponse = new CommandSuccessResponse();
-    commandSuccessResponse = resp;
-    console.log("sending command response for addAssetQuantity :: %s\n", JSON.stringify(commandSuccessResponse));
-    return commandSuccessResponse;  
+export function setIrohaSuccessResp(resp: IrohaSuccessResponse){
+    let irohaSuccessResponse = new IrohaSuccessResponse();
+    irohaSuccessResponse = resp;
+    console.log("sending iroha response :: %s\n", JSON.stringify(irohaSuccessResponse));
+    return irohaSuccessResponse;  
 }
 
 export function setIrohaErrorResp(err: any){
-    let commandErrorResponse = new CommandErrorResponse();
-    commandErrorResponse.error = err.message;
-    commandErrorResponse.status = err.message.split("actual=")[1];
+    let irohaErrorResponse = new IrohaErrorResponse();
+    irohaErrorResponse.error = err.message;
+    irohaErrorResponse.status = err.message.split("actual=")[1];
 
-    console.log('Received error while sending command: ', commandErrorResponse);
-    return commandErrorResponse;          
+    console.log('Received iroha error: ', irohaErrorResponse);
+    return irohaErrorResponse;          
+}
+
+export function createKeyPair(){
+    let keyPair = cryptoHelper.generateKeyPair();
+    return keyPair;
 }

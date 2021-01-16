@@ -1,3 +1,5 @@
+import { IROHA_ACCOUNT_SUFFIX } from "../../common/Constants";
+
 // REQUEST INTERFACE
 export class AdjustAssetQuantityRequest {
     assetId!: string;
@@ -8,6 +10,17 @@ export class AdjustAssetQuantityRequest {
     AdjustAssetQuantityRequest(assetId: string, amount: number) {
         this.assetId = assetId;
         this.amount = amount;
+    }
+}
+
+// REQUEST INTERFACE
+export class OnboardLicenseeRequest {
+    accountId!: string;
+
+    constructor(){}
+
+    OnboardLicenseeRequest(accountId: string) {
+        this.accountId = accountId;
     }
 }
 
@@ -39,10 +52,8 @@ export class AppendRoleRequest {
     accountId!: string;
     roleName!: string;
 
-    constructor(){}
-
-    AppendRoleRequest(accountId: string, roleName: string) {
-        this.accountId = accountId;
+    constructor(accountId: string, roleName: string) {
+        this.accountId = accountId+IROHA_ACCOUNT_SUFFIX;
         this.roleName = roleName;
     }
 }
@@ -71,9 +82,7 @@ export class CreateAccountRequest {
     domainId!: string;
     publicKey!: string;
    
-    constructor(){}
-
-    CreateAccountRequest(accountName: string, domainId: string, publicKey: string) {
+    constructor(accountName: string, domainId: string, publicKey: string){
         this.accountName = accountName;
         this.domainId = domainId;
         this.publicKey = publicKey;

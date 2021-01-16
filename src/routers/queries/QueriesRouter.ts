@@ -48,7 +48,7 @@ class QueriesRouter {
 
   private async _getAccount() { 
     await this._router.post('/getAccount', (req: Request, res: Response, next: NextFunction) => {
-      let getAccountRequest = new QueryRequests.GetAccountRequest;
+      let getAccountRequest = new QueryRequests.GetAccountRequest(req.body.accountId);
       getAccountRequest = req.body;
       console.log("Incoming request for query *getAccount* ::: %s",getAccountRequest);
 

@@ -3,7 +3,8 @@ import {
     QueryService_v1Client as QueryService
   } from 'iroha-helpers-ts/lib/proto/endpoint_grpc_pb';
 import queriesInit from 'iroha-helpers-ts/lib/queries/index';
-import { setIrohaErrorResp, setIrohaSuccessResp } from '../utils/utils'
+import { IROHA_ADMIN_ACCOUNT, IROHA_ADMIN_PRIM_KEY, IROHA_PEER_ADDR } from '../common/Constants';
+import { setIrohaErrorResp, setIrohaSuccessResp } from '../common/Utils'
 import { AccountResponse, SignatoriesResponse,
         TransactionsResponse, PendingTransactionsPageResponse,
         TransactionsPageResponse, AccountAssetResponse,
@@ -17,15 +18,13 @@ import { GetAccountAssetsRequest, GetAccountAssetTransactionsRequest, GetAccount
 class QueriesController {
 
   // QUERIES
-    private IROHA_ADDRESS = 'localhost:50051';
-    private adminAccount = 'admin@test';
-    private queryService = new QueryService(this.IROHA_ADDRESS, grpc.credentials.createInsecure());
-    private adminPriv = 'f101537e319568c765b2cc89698325604991dca57b9716b58016b253506cab70';
+    private queryService = new QueryService(IROHA_PEER_ADDR, grpc.credentials.createInsecure());
+    private adminPriv = IROHA_ADMIN_PRIM_KEY;
     private queries = queriesInit;
 
     private QUERY_OPTIONS = {
         privateKey: this.adminPriv,
-        creatorAccountId: this.adminAccount,
+        creatorAccountId: IROHA_ADMIN_ACCOUNT,
         queryService: this.queryService,
         timeoutLimit: 5000,
     };
@@ -34,7 +33,7 @@ class QueriesController {
 
     // TO DO - CHECK IF IT WORKS
     getAccount(getAccountRequest: GetAccountRequest) : Promise<any> {
-      return this.queries.getAccount(this.QUERY_OPTIONS, getAccountRequest)
+      return this.queries.getAccount(this.QUERY_OPTIONS, {accountId: getAccountRequest.accountId})
         .then((resp: any) => {
           return setIrohaSuccessResp(resp);      
         })

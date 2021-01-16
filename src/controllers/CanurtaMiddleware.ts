@@ -7,6 +7,7 @@ private assetId = 'canurta@atlas';
   constructor() {
 
   }
+
   processHempCoa(batch:any){
     const req = request(
         {

@@ -3,17 +3,17 @@ import {
     CommandService_v1Client as CommandService
   } from 'iroha-helpers-ts/lib/proto/endpoint_grpc_pb';
 import commandsInit from 'iroha-helpers-ts/lib/commands/index';
-import { setIrohaErrorResp, setIrohaSuccessResp } from '../utils/utils';
+import { setIrohaErrorResp, setIrohaSuccessResp } from '../common/Utils';
 import { AdjustAssetQuantityRequest, AddPeerRequest, AddSignatoryRequest, AppendRoleRequest, CompareAndSetAccountDetailRequest, CreateAccountRequest, CreateAssetRequest, CreateDomainRequest, CreateRoleRequest, DetachRoleRequest, GrantablePermissionRequest, RemovePeerRequest, RemoveSignatoryRequest, RevokePermissionRequest, SetAccountDetailRequest, SetAccountQuorumRequest, TransferAssetRequest } from '../interfaces/iroha/CommandRequests';
-
+import { IROHA_ADMIN_ACCOUNT, IROHA_ADMIN_PRIM_KEY, IROHA_PEER_ADDR } from '../common/Constants';
+import * as Service from "iroha-helpers-ts";
 
 class CommandsController {
 
     // COMMANDS    
-    private IROHA_ADDRESS = 'localhost:50051';
-    private adminAccount = 'admin@test';
-    private commandService = new CommandService(this.IROHA_ADDRESS,grpc.credentials.createInsecure());
-    private adminPriv = 'f101537e319568c765b2cc89698325604991dca57b9716b58016b253506cab70';
+    private adminAccount = IROHA_ADMIN_ACCOUNT;
+    private commandService = new CommandService(IROHA_PEER_ADDR,grpc.credentials.createInsecure());
+    private adminPriv = IROHA_ADMIN_PRIM_KEY;
     private commands = commandsInit;
     
     private COMMAND_OPTIONS = {
@@ -59,7 +59,9 @@ class CommandsController {
     //END TODO
 
     appendRole(appendRoleRequest: AppendRoleRequest): Promise<any> {
-      return this.commands.appendRole(this.COMMAND_OPTIONS,appendRoleRequest)
+      return this.commands.appendRole(this.COMMAND_OPTIONS,{
+        accountId: appendRoleRequest.accountId,
+        roleName: appendRoleRequest.roleName})
         .then((resp: any) => {
           return setIrohaSuccessResp(resp);      
         })
@@ -79,7 +81,11 @@ class CommandsController {
     };
 
     createAccount(createAccountRequest: CreateAccountRequest): Promise<any> {
-      return this.commands.createAccount(this.COMMAND_OPTIONS, createAccountRequest)
+      return this.commands.createAccount(this.COMMAND_OPTIONS, {
+        accountName: createAccountRequest.accountName,
+        domainId: createAccountRequest.domainId,
+        publicKey: createAccountRequest.publicKey
+      })
         .then((resp: any) => {
           return setIrohaSuccessResp(resp);      
         })
