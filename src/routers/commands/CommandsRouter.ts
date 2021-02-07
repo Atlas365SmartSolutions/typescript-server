@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import { filter } from 'rxjs/operators'
-import CommandsController from '../../controllers/CommandsController';
+//import CommandsController from '../../controllers/CommandsController';
 import { AdjustAssetQuantityRequest, AddPeerRequest, AddSignatoryRequest, AppendRoleRequest, CompareAndSetAccountDetailRequest, CreateAccountRequest, CreateAssetRequest, CreateDomainRequest, CreateRoleRequest, DetachRoleRequest, GrantablePermissionRequest, RemovePeerRequest, RemoveSignatoryRequest, RevokePermissionRequest, SetAccountDetailRequest, SetAccountQuorumRequest, TransferAssetRequest } from '../../interfaces/iroha/CommandRequests';
 import  cryptoHelper from 'iroha-helpers-ts/lib/cryptoHelper';
 import { create } from 'domain';
 import { GrantablePermission } from 'iroha-helpers-ts/lib/proto/primitive_pb';
+import CommandsController = require('../../controllers/CommandsController');
 
 class CommandsRouter {
   private _router = Router();
@@ -194,7 +195,7 @@ class CommandsRouter {
 
   private async _createAsset() {
     await this._router.post('/createAsset', (req: Request, res: Response, next: NextFunction) => {
-      let createAssetRequest = new CreateAssetRequest;
+      let createAssetRequest = new CreateAssetRequest(req.body.assetId,req.body.domainId,req.body.precision);
       createAssetRequest = req.body;
       console.log("Incoming request for command *createAsset* ::: %s",createAssetRequest);
 
@@ -211,7 +212,7 @@ class CommandsRouter {
 
   private async _createDomain() {
     await this._router.post('/createDomain', (req: Request, res: Response, next: NextFunction) => {
-      let createDomainRequest = new CreateDomainRequest;
+      let createDomainRequest = new CreateDomainRequest(req.body.domainId,req.body.defaultRole);
       createDomainRequest = req.body;
       console.log("Incoming request for command *createDomain* ::: %s",createDomainRequest);
 

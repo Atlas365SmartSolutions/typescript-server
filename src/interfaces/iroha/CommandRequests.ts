@@ -94,9 +94,9 @@ export class CreateAssetRequest {
     domainId!: string;
     precision!: number;
    
-    constructor(){}
+    //constructor(){}
 
-    CreateAssetRequest(assetName: string, domainId: string, precision: number) {
+    constructor(assetName: string, domainId: string, precision: number) {
         this.assetName = assetName;
         this.domainId = domainId;
         this.precision = precision;
@@ -107,9 +107,9 @@ export class CreateDomainRequest {
     domainId!: string;
     defaultRole!: string;
    
-    constructor(){}
+    //constructor(){}
 
-    CreateDomainRequest(domainId: string, defaultRole: string) {
+    constructor(domainId: string, defaultRole: string) {
         this.domainId = domainId;
         this.defaultRole = defaultRole;
     }

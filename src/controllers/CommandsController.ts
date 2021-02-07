@@ -1,4 +1,4 @@
-import grpc from 'grpc';
+import * as grpc from 'grpc';
 import {
     CommandService_v1Client as CommandService
   } from 'iroha-helpers-ts/lib/proto/endpoint_grpc_pb';
@@ -95,7 +95,11 @@ class CommandsController {
     };
 
     createAsset(createAssetRequest: CreateAssetRequest): Promise<any>{
-      return this.commands.createAsset(this.COMMAND_OPTIONS, createAssetRequest)
+      return this.commands.createAsset(this.COMMAND_OPTIONS, {
+        assetName: createAssetRequest.assetName,
+        domainId: createAssetRequest.domainId,
+        precision: createAssetRequest.precision
+      })
         .then((resp: any) => {
           return setIrohaSuccessResp(resp);      
         })
