@@ -26,7 +26,10 @@ class CommandsController {
 
       // COMMANDS
     addAssetQuantity(addAssetQuantityRequest: AdjustAssetQuantityRequest): Promise<any> {
-      return this.commands.addAssetQuantity(this.COMMAND_OPTIONS, addAssetQuantityRequest)
+      return this.commands.addAssetQuantity(this.COMMAND_OPTIONS, {
+        assetId: addAssetQuantityRequest.assetId,
+        amount: addAssetQuantityRequest.amount
+      })
         .then((resp: any) => {
           return setIrohaSuccessResp(resp);      
         })
@@ -36,7 +39,10 @@ class CommandsController {
     };
     //TODO:: FIX THIS COMMAND
     addPeer(addPeerRequest: AddPeerRequest): Promise<any>{
-      return this.commands.addPeer(this.COMMAND_OPTIONS, addPeerRequest)
+      return this.commands.addPeer(this.COMMAND_OPTIONS, {
+        address: addPeerRequest.address,
+        peerKey: addPeerRequest.peerKey
+      })
         .then((resp: any) => {
           return setIrohaSuccessResp(resp);      
         })
@@ -48,7 +54,10 @@ class CommandsController {
 
     //TODO:: FIX THIS COMMAND
     addSignatory(addSignatoryRequest: AddSignatoryRequest): Promise<any> {
-      return this.commands.addSignatory(this.COMMAND_OPTIONS,addSignatoryRequest)
+      return this.commands.addSignatory(this.COMMAND_OPTIONS,{
+        accountId: addSignatoryRequest.accountId,
+        publicKey: addSignatoryRequest.publicKey
+      })
         .then((resp: any) => {
           return setIrohaSuccessResp(resp);      
         })
@@ -71,7 +80,12 @@ class CommandsController {
     };
 
     compareAndSetAccountDetail(compareAndSetAccountDetailRequest: CompareAndSetAccountDetailRequest): Promise<any>{
-      return this.commands.compareAndSetAccountDetail(this.COMMAND_OPTIONS, compareAndSetAccountDetailRequest)
+      return this.commands.compareAndSetAccountDetail(this.COMMAND_OPTIONS, {
+        accountId: compareAndSetAccountDetailRequest.accountId,
+        key: compareAndSetAccountDetailRequest.key,
+        value: compareAndSetAccountDetailRequest.value,
+        oldValue: compareAndSetAccountDetailRequest.oldValue
+      })
         .then((resp: any) => {
           return setIrohaSuccessResp(resp);      
         })
@@ -109,7 +123,10 @@ class CommandsController {
     };
 
     createDomain(createDomainRequest: CreateDomainRequest): Promise<any>{
-      return this.commands.createDomain(this.COMMAND_OPTIONS, createDomainRequest)
+      return this.commands.createDomain(this.COMMAND_OPTIONS, {
+        domainId: createDomainRequest.domainId,
+        defaultRole: createDomainRequest.defaultRole
+      })
         .then((resp: any) => {
           return setIrohaSuccessResp(resp);      
         })
@@ -119,7 +136,10 @@ class CommandsController {
     };
 
     createRole(createRoleRequest: CreateRoleRequest): Promise<any>{
-      return this.commands.createRole(this.COMMAND_OPTIONS, createRoleRequest)
+      return this.commands.createRole(this.COMMAND_OPTIONS, {
+        roleName: createRoleRequest.roleName,
+        permissionsList: createRoleRequest.permissionsList
+      })
         .then((resp: any) => {
           return setIrohaSuccessResp(resp);      
         })
@@ -129,7 +149,10 @@ class CommandsController {
     };
 
     detachRole(detachRoleRequest: DetachRoleRequest): Promise<any>{
-      return this.commands.detachRole(this.COMMAND_OPTIONS, detachRoleRequest)
+      return this.commands.detachRole(this.COMMAND_OPTIONS, {
+        accountId: detachRoleRequest.accountId,
+        roleName: detachRoleRequest.roleName
+      })
         .then((resp: any) => {
           return setIrohaSuccessResp(resp);      
         })
@@ -139,7 +162,10 @@ class CommandsController {
     };
 
     grantPermission(grantablePermissionRequest: GrantablePermissionRequest){
-      return this.commands.grantPermission(this.COMMAND_OPTIONS, grantablePermissionRequest)
+      return this.commands.grantPermission(this.COMMAND_OPTIONS, {
+        accountId: grantablePermissionRequest.accountId,
+        permission: grantablePermissionRequest.permission
+      })
         .then((resp: any) => {
           return setIrohaSuccessResp(resp);      
         })
@@ -149,7 +175,9 @@ class CommandsController {
     };
 
     removePeer(removePeerRequest: RemovePeerRequest): Promise<any>{
-      return this.commands.removePeer(this.COMMAND_OPTIONS, removePeerRequest)
+      return this.commands.removePeer(this.COMMAND_OPTIONS, {
+        publicKey: removePeerRequest.publicKey
+      })
         .then((resp: any) => {
           return setIrohaSuccessResp(resp);      
         })
@@ -159,7 +187,10 @@ class CommandsController {
     };
 
     removeSignatory(removeSignatoryRequest: RemoveSignatoryRequest): Promise<any>{
-      return this.commands.removeSignatory(this.COMMAND_OPTIONS, removeSignatoryRequest)
+      return this.commands.removeSignatory(this.COMMAND_OPTIONS, {
+        accountId: removeSignatoryRequest.accountId,
+        publicKey: removeSignatoryRequest.publicKey
+      })
         .then((resp: any) => {
           return setIrohaSuccessResp(resp);      
         })
@@ -169,7 +200,10 @@ class CommandsController {
     };
 
     revokePermission(revokePermissionRequest: RevokePermissionRequest): Promise<any> {
-      return this.commands.revokePermission(this.COMMAND_OPTIONS, revokePermissionRequest)
+      return this.commands.revokePermission(this.COMMAND_OPTIONS, {
+        accountId: revokePermissionRequest.accountId,
+        permission: revokePermissionRequest.permission
+      })
         .then((resp: any) => {
           return setIrohaSuccessResp(resp);      
         })
@@ -179,7 +213,11 @@ class CommandsController {
     };
 
     setAccountDetail(setAccountDetailRequest: SetAccountDetailRequest): Promise<any>{
-      return this.commands.setAccountDetail(this.COMMAND_OPTIONS,setAccountDetailRequest)
+      return this.commands.setAccountDetail(this.COMMAND_OPTIONS, {
+        accountId: setAccountDetailRequest.accountId,
+        key: setAccountDetailRequest.key,
+        value: setAccountDetailRequest.value
+      })
         .then((resp: any) => {
           return setIrohaSuccessResp(resp);      
         })
@@ -189,7 +227,10 @@ class CommandsController {
     };
     
     setAccountQuorum(setAccountQuorumRequest: SetAccountQuorumRequest): Promise<any>{
-      return this.commands.setAccountQuorum(this.COMMAND_OPTIONS,setAccountQuorumRequest)
+      return this.commands.setAccountQuorum(this.COMMAND_OPTIONS, {
+        accountId: setAccountQuorumRequest.accountId,
+        quorum: setAccountQuorumRequest.quorum
+      })
         .then((resp: any) => {
           return setIrohaSuccessResp(resp);      
         })
@@ -199,7 +240,10 @@ class CommandsController {
     };
 
     subtractAssetQuantity(subtractAssetQuantityRequest: AdjustAssetQuantityRequest): Promise<any>{
-      return this.commands.subtractAssetQuantity(this.COMMAND_OPTIONS,subtractAssetQuantityRequest)
+      return this.commands.subtractAssetQuantity(this.COMMAND_OPTIONS, {
+        assetId: subtractAssetQuantityRequest.assetId,
+        amount: subtractAssetQuantityRequest.amount
+      })
         .then((resp: any) => {
           return setIrohaSuccessResp(resp);      
         })
@@ -209,7 +253,13 @@ class CommandsController {
     };
 
     transferAsset(transferAssetRequest: TransferAssetRequest): Promise<any>{
-      return this.commands.transferAsset(this.COMMAND_OPTIONS,transferAssetRequest)
+      return this.commands.transferAsset(this.COMMAND_OPTIONS, {
+        srcAccountId: transferAssetRequest.srcAccountId,
+        destAccountId: transferAssetRequest.destAccountId,
+        assetId: transferAssetRequest.assetId,
+        description: transferAssetRequest.description,
+        amount: transferAssetRequest.amount
+      })
         .then((resp: any) => {
           return setIrohaSuccessResp(resp);      
         })

@@ -84,7 +84,7 @@ class CommandsRouter {
 
   private async _addAssetQuantity() {
     this._router.post('/addAssetQuantity',  (req: Request, res: Response) => {
-      let addAssetQuantityRequest = new AdjustAssetQuantityRequest;
+      let addAssetQuantityRequest = new AdjustAssetQuantityRequest(req.body.assetId, req.body.amount);
       addAssetQuantityRequest = req.body;
       console.log("Incoming request for command *addAssetQuantity* ::: %s",addAssetQuantityRequest);
       
@@ -101,7 +101,7 @@ class CommandsRouter {
   //TODO:: FIX THIS COMMAND
   private async _addPeer() {
     this._router.post('/addPeer', (req: Request, res: Response, next: NextFunction) => {
-      let addPeerRequest = new AddPeerRequest;
+      let addPeerRequest = new AddPeerRequest(req.body.address, req.body.peerKey);
       let keyPair = cryptoHelper.generateKeyPair();
       addPeerRequest.address = req.body.address;
       addPeerRequest.peerKey = keyPair.publicKey;
@@ -122,7 +122,7 @@ class CommandsRouter {
   //TODO:: FIX THIS COMMAND
   private async _addSignatory() {
     await this._router.post('/addSignatory', (req: Request, res: Response, next: NextFunction) => {
-      let addSignatoryRequest = new AddSignatoryRequest;
+      let addSignatoryRequest = new AddSignatoryRequest(req.body.accountId, req.body.publicKey);
       let keyPair = cryptoHelper.generateKeyPair();
       addSignatoryRequest.accountId = req.body.accountId;
       addSignatoryRequest.publicKey = keyPair.publicKey;
@@ -161,7 +161,7 @@ class CommandsRouter {
 
   private async _compareAndSetAccountDetail() {
     await this._router.post('/compareAndSetAccountDetail', (req: Request, res: Response, next: NextFunction) => {
-      let compareAndSetAccountDetailRequest = new CompareAndSetAccountDetailRequest;
+      let compareAndSetAccountDetailRequest = new CompareAndSetAccountDetailRequest(req.body.accountId, req.body.key, req.body.value, req.body.oldValue, req.body.emptyCheck);
       compareAndSetAccountDetailRequest = req.body;
       console.log("Incoming request for command *compareAndSetAccountDetail* ::: %s",compareAndSetAccountDetailRequest);
 
@@ -230,7 +230,7 @@ class CommandsRouter {
   //TODO:: FIX THIS COMMAND
   private async _createRole() {
     await this._router.post('/createRole', (req: Request, res: Response, next: NextFunction) => {
-      let createRoleRequest = new CreateRoleRequest;
+      let createRoleRequest = new CreateRoleRequest(req.body.roleName, req.body.permissionsList);
       createRoleRequest = req.body;
       console.log("Incoming request for command *createRole* ::: %s",createRoleRequest);
       
@@ -247,7 +247,7 @@ class CommandsRouter {
   //END TODO::
   private async _detachRole() {
     await this._router.post('/detachRole', (req: Request, res: Response, next: NextFunction) => {
-      let detachRoleRequest = new DetachRoleRequest;
+      let detachRoleRequest = new DetachRoleRequest(req.body.accountId, req.body.roleName);
       detachRoleRequest = req.body;
       console.log("Incoming request for command *detachRole* ::: %s",detachRoleRequest);
 
@@ -265,7 +265,7 @@ class CommandsRouter {
   //TODO:: FIX THIS COMMAND
   private async _grantPermission() {
     await this._router.post('/grantPermission', (req: Request, res: Response, next: NextFunction) => {
-      let grantablePermissionRequest = new GrantablePermissionRequest;
+      let grantablePermissionRequest = new GrantablePermissionRequest(req.body.accountId, req.body.permission);
       grantablePermissionRequest = req.body;
       console.log("Incoming request for command *grantPermission* ::: %s",grantablePermissionRequest);
 
@@ -283,7 +283,7 @@ class CommandsRouter {
 
   private async _removePeer() {
     await this._router.post('/removePeer', (req: Request, res: Response, next: NextFunction) => {
-      let removePeerRequest = new RemovePeerRequest;
+      let removePeerRequest = new RemovePeerRequest(req.body.publicKey);
       removePeerRequest = req.body;
       console.log("Incoming request for command *removePeer* ::: %s",removePeerRequest);
 
@@ -300,7 +300,7 @@ class CommandsRouter {
 
   private async _removeSignatory() {
     await this._router.post('/removeSignatory', (req: Request, res: Response, next: NextFunction) => {
-      let removeSignatoryRequest = new RemoveSignatoryRequest;
+      let removeSignatoryRequest = new RemoveSignatoryRequest(req.body.accountId, req.body.publicKey);
       removeSignatoryRequest = req.body;
       console.log("Incoming request for command *removeSignatory* ::: %s",removeSignatoryRequest);
 
@@ -317,7 +317,7 @@ class CommandsRouter {
 
   private async _revokePermission() {
     await this._router.post('/revokePermission', (req: Request, res: Response, next: NextFunction) => {
-      let revokePermissionRequest = new RevokePermissionRequest;
+      let revokePermissionRequest = new RevokePermissionRequest(req.body.accountId, req.body.permission);
       revokePermissionRequest = req.body;
       console.log("Incoming request for command *revokePermission* ::: %s",revokePermissionRequest);
 
@@ -334,7 +334,7 @@ class CommandsRouter {
 
   private async _setAccountDetail() {
     await this._router.post('/setAccountDetail', (req: Request, res: Response, next: NextFunction) => {
-      let setAccountDetailRequest = new SetAccountDetailRequest;
+      let setAccountDetailRequest = new SetAccountDetailRequest(req.body.accountId, req.body.value, req.body.key);
       setAccountDetailRequest = req.body;
       console.log("Incoming request for command *setAccountDetail* ::: %s",setAccountDetailRequest);
 
@@ -351,7 +351,7 @@ class CommandsRouter {
 
   private async _setAccountQuorum() {
     await this._router.post('/setAccountQuorum', (req: Request, res: Response, next: NextFunction) => {
-      let setAccountQuorumRequest = new SetAccountQuorumRequest;
+      let setAccountQuorumRequest = new SetAccountQuorumRequest(req.body.accountId, req.body.quorum);
       setAccountQuorumRequest = req.body;
       console.log("Incoming request for command *setAccountQuorum* ::: %s",setAccountQuorumRequest);
 
@@ -368,7 +368,7 @@ class CommandsRouter {
 
   private async _subtractAssetQuantity() {
     this._router.post('/subtractAssetQuantity',  (req: Request, res: Response, next: NextFunction) => {
-      let subtractAssetQuantityRequest = new AdjustAssetQuantityRequest;
+      let subtractAssetQuantityRequest = new AdjustAssetQuantityRequest(req.body.assetId, req.body.amount);
       subtractAssetQuantityRequest = req.body;
       console.log("Incoming request for command *subtractAssetQuantity* ::: %s",subtractAssetQuantityRequest);
       
@@ -385,7 +385,7 @@ class CommandsRouter {
 
   private async _transferAsset() {
     await this._router.post('/transferAsset', (req: Request, res: Response, next: NextFunction) => {
-      let transferAssetRequest = new TransferAssetRequest;
+      let transferAssetRequest = new TransferAssetRequest(req.body.srcAccountId, req.body.destAccountId, req.body.assetId, req.body.description, req.body.amount);
       transferAssetRequest = req.body;
       console.log("Incoming request for command *transferAsset* ::: %s",transferAssetRequest);
       

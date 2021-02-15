@@ -3,11 +3,11 @@ import { IROHA_ACCOUNT_SUFFIX } from "../../common/Constants";
 // REQUEST INTERFACE
 export class AdjustAssetQuantityRequest {
     assetId!: string;
-    amount!: number;
+    amount!: string;
 
-    constructor(){}
+    //constructor(){}
 
-    AdjustAssetQuantityRequest(assetId: string, amount: number) {
+    constructor(assetId: string, amount: string) {
         this.assetId = assetId;
         this.amount = amount;
     }
@@ -17,9 +17,9 @@ export class AdjustAssetQuantityRequest {
 export class OnboardLicenseeRequest {
     accountId!: string;
 
-    constructor(){}
+    //constructor(){}
 
-    OnboardLicenseeRequest(accountId: string) {
+    constructor(accountId: string) {
         this.accountId = accountId;
     }
 }
@@ -28,9 +28,9 @@ export class AddPeerRequest {
     address!: string;
     peerKey!: string;
 
-    constructor(){}
+    //constructor(){}
 
-    AddPeerRequest(address: string, peerKey: string) {
+    constructor(address: string, peerKey: string) {
         this.address = address;
         this.peerKey = peerKey;
     }
@@ -40,9 +40,9 @@ export class AddSignatoryRequest {
     accountId!: string;
     publicKey!: string;
 
-    constructor(){}
+    //constructor(){}
 
-    AddSignatoryRequest(accountId: string, publicKey: string) {
+    constructor(accountId: string, publicKey: string) {
         this.accountId = accountId;
         this.publicKey = publicKey;
     }
@@ -53,7 +53,7 @@ export class AppendRoleRequest {
     roleName!: string;
 
     constructor(accountId: string, roleName: string) {
-        this.accountId = accountId+IROHA_ACCOUNT_SUFFIX;
+        this.accountId = `${accountId}@${accountId}`;
         this.roleName = roleName;
     }
 }
@@ -66,9 +66,9 @@ export class CompareAndSetAccountDetailRequest {
     emptyCheck: boolean | undefined = false; //if true, empty oldValue in command must match absent value in WSV; 
                                              //if false, any oldValue in command matches absent in WSV (legacy)
 
-    constructor(){}
+    //constructor(){}
 
-    CompareAndSetAccountDetailRequest(accountId: string, key: string, value: string, oldValue: string, emptyCheck: boolean) {
+    constructor(accountId: string, key: string, value: string, oldValue: string, emptyCheck: boolean) {
         this.accountId = accountId;
         this.key = key;
         this.value = value;
@@ -89,12 +89,22 @@ export class CreateAccountRequest {
     }
 }
 
+export class CreateNewDomainRequest {
+    domainId!: string;
+    defaultRole!: string;
+   
+    constructor(domainId: string, defaultRole: string){
+        this.domainId = domainId;
+        this.defaultRole = defaultRole;
+    }
+}
+
 export class CreateAssetRequest {
     assetName!: string;
     domainId!: string;
     precision!: number;
    
-    //constructor(){}
+    ////constructor(){}
 
     constructor(assetName: string, domainId: string, precision: number) {
         this.assetName = assetName;
@@ -107,7 +117,7 @@ export class CreateDomainRequest {
     domainId!: string;
     defaultRole!: string;
    
-    //constructor(){}
+    ////constructor(){}
 
     constructor(domainId: string, defaultRole: string) {
         this.domainId = domainId;
@@ -119,9 +129,9 @@ export class CreateRoleRequest {
     roleName!: string;
     permissionsList!: Array<string>;
    
-    constructor(){}
+    //constructor(){}
 
-    CreateRoleRequest(roleName: string, permissionsList: Array<string>) {
+    constructor(roleName: string, permissionsList: Array<string>) {
         this.roleName = roleName;
         this.permissionsList = permissionsList;
     }
@@ -131,9 +141,9 @@ export class DetachRoleRequest {
     accountId!: string;
     roleName!: string;
    
-    constructor(){}
+    //constructor(){}
 
-    DetachRoleRequest(accountId: string, roleName: string) {
+    constructor(accountId: string, roleName: string) {
         this.accountId = accountId;
         this.roleName = roleName;
     }
@@ -143,9 +153,9 @@ export class GrantablePermissionRequest {
     accountId!: string;
     permission!: string;
    
-    constructor(){}
+    //constructor(){}
 
-    GrantablePermissionRequest(accountId: string, permission: string) {
+    constructor(accountId: string, permission: string) {
         this.accountId = accountId;
         this.permission = permission;
     }
@@ -154,9 +164,9 @@ export class GrantablePermissionRequest {
 export class RemovePeerRequest {
     publicKey!: string;
 
-    constructor(){}
+    //constructor(){}
 
-    RemovePeerRequest(publicKey: string) {
+    constructor(publicKey: string) {
         this.publicKey = publicKey;
     }
 }
@@ -165,9 +175,9 @@ export class RemoveSignatoryRequest {
     accountId!: string;
     publicKey!: string;
 
-    constructor(){}
+    //constructor(){}
 
-    RemoveSignatoryRequest(accountId: string, publicKey: string) {
+    constructor(accountId: string, publicKey: string) {
         this.accountId = accountId;
         this.publicKey = publicKey;
     }
@@ -177,9 +187,9 @@ export class RevokePermissionRequest {
     accountId!: string;
     permission!: string;
 
-    constructor(){}
+    //constructor(){}
 
-    RevokePermissionRequest(accountId: string, permission: string) {
+    constructor(accountId: string, permission: string) {
         this.accountId = accountId;
         this.permission = permission;
     }
@@ -190,9 +200,9 @@ export class SetAccountDetailRequest {
     key!: string;
     value!: string;
 
-    constructor(){}
+    // //constructor(){}
 
-    SetAccountDetailRequest(accountId: string, value: string, key: string) {
+    constructor(accountId: string, value: string, key: string) {
         this.accountId = accountId;
         this.key = key;
         this.value = value;
@@ -203,9 +213,9 @@ export class SetAccountQuorumRequest {
     accountId!: string;
     quorum!: number;
 
-    constructor(){}
+    //constructor(){}
 
-    SetAccountQuorumRequest(accountId: string, quorum: number) {
+    constructor(accountId: string, quorum: number) {
         this.accountId = accountId;
         this.quorum = quorum;
     }
@@ -216,13 +226,13 @@ export class TransferAssetRequest {
     destAccountId!: string;
     assetId!: string;
     description!: string;
-    amount!: number;
+    amount!: string;
 
-    constructor(){}
+    //constructor(){}
 
-    TransferAssetRequest(srcAccountId: string, destAccountId: string, assetId: string, description: string, amount: number) {
+    constructor(srcAccountId: string, destAccountId: string, assetId: string, description: string, amount: string) {
         this.srcAccountId = srcAccountId;
-        this.destAccountId = destAccountId;
+        this.destAccountId = `${destAccountId}@${destAccountId}`;
         this.assetId = assetId;
         this.description = description;        
         this.amount = amount;

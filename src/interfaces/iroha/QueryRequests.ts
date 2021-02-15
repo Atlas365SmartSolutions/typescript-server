@@ -1,9 +1,10 @@
 // REQUEST INTERFACE
 export class GetAccountRequest {
     accountId!: string;
+    domainId!: string;
    
-    constructor(accountId: string){
-        this.accountId = accountId;
+    constructor(accountId: string, domainId: string){
+        this.accountId = `${accountId}@${domainId}`;
     }
 }
 
