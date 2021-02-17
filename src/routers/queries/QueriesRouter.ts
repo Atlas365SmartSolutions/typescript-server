@@ -110,7 +110,7 @@ class QueriesRouter {
         .then(irohaResponse => {
           if(irohaResponse.length === 0) {
             res.status(204).json(irohaResponse);
-          } else if (irohaResponse.length > 0) {
+          } else if (irohaResponse) {
             res.status(200).json(irohaResponse);
           } else {
             res.status(500).json(irohaResponse);
