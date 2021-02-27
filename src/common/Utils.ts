@@ -4,6 +4,11 @@ import { IrohaErrorResponse, IrohaSuccessResponse } from "../interfaces/iroha/Ir
 export class utils {
     constructor(){}
 }
+export enum LicenseType {
+ JBF = 'Just Bio Fibre',
+ CANURTA = 'Canurta',
+ CANURTASYRUP = 'Canurta Syrup'
+}
 
 export function escapeJSON(request: any){
     var myJSONString = JSON.stringify(request);
