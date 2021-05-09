@@ -1,22 +1,16 @@
 import * as grpc from 'grpc';
 import {
-    CommandService_v1Client as CommandService, CommandService_v1Client
+    CommandService_v1Client as CommandService_v1Client
   } from 'iroha-helpers-ts/lib/proto/endpoint_grpc_pb';
-import commandsInit from 'iroha-helpers-ts/lib/commands/index';
 import { OnboardFarmerRequest } from '../interfaces/AccountInterfaces';
 import { IncomingHttpHeaders } from 'http';
-import { Router } from 'express';
 import { IROHA_ADMIN_PRIM_KEY, IROHA_PEER_ADDR, IROHA_ROLE_FARMER, IROHA_ROLE_USER } from '../common/Constants';
-import CommandsController from '../controllers/CommandsController';
-import QueriesController from '../controllers/QueriesController';
 import { AppendRoleRequest, CreateAccountRequest, CreateDomainRequest, SetAccountDetailRequest } from '../interfaces/iroha/CommandRequests';
 import { BatchBuilder, TxBuilder } from 'iroha-helpers-ts/lib/chain';
-import { createKeyPair, escapeJSON, returnJSON } from '../common/Utils';
+import { createKeyPair, escapeJSON } from '../common/Utils';
+import _ from 'lodash';
 
 class FarmerService {
-    private _router = Router();
-    private commandsController = CommandsController;
-    private queriesController = QueriesController;
     private commandService = new CommandService_v1Client(IROHA_PEER_ADDR,grpc.credentials.createInsecure())
 
     // COMMANDS
@@ -27,14 +21,7 @@ class FarmerService {
         let createAccountReq = new CreateAccountRequest(onboardFarmerRequest.name, onboardFarmerRequest.farmBusinessName,keypair.publicKey);
         let appendRoleReq = new AppendRoleRequest(accountId,IROHA_ROLE_FARMER);
         let setAccountDetailsReq = new SetAccountDetailRequest(accountId, escapeJSON(JSON.stringify(onboardFarmerRequest)),'account')
-        // escapeJSON(JSON.stringify((onboardFarmerRequest)))
-        // Promise.all([
-        //     this.commandsController.createDomain(createDomainReq),
-        //     this.commandsController.createAccount(),
-        //     this.commandsController.appendRole(),
-        //     this.commandsController.setAccountDetail()
 
-        //   ])
         // CreateDomain Transaction
         const createDomainTx = new TxBuilder()
         .createDomain({domainId: createDomainReq.domainId, defaultRole: createDomainReq.defaultRole})
@@ -59,39 +46,30 @@ class FarmerService {
         .addMeta('admin@atlas', 1)
         .tx;
 
-        console.log(JSON.stringify(onboardFarmerRequest));
 
         const batchBuilder = new BatchBuilder([
             createDomainTx,
             createAccountTx,
             appendRoleTx,
             SetAccountDetailTx
-
           ]);
-           const batch = batchBuilder
-          .setBatchMeta(0);
+        
+        let batch = batchBuilder.setBatchMeta(0);
 
+        for (let i = 0; i < batch.txs.length; i++) {
+          batch = batch.sign([IROHA_ADMIN_PRIM_KEY],i);            
+        }
     
-        return batchBuilder
-            .setBatchMeta(0)
-            .sign([IROHA_ADMIN_PRIM_KEY], 0)
-            .sign([IROHA_ADMIN_PRIM_KEY], 1)
-            .sign([IROHA_ADMIN_PRIM_KEY], 2)
-            .sign([IROHA_ADMIN_PRIM_KEY], 3)
-            .send(this.commandService, 5000)
-            .then(batchBuilderResponse => {
-              console.log("BatchBuilder Response",batchBuilderResponse);
-              return batchBuilderResponse;
-            })
-            .catch(err => {
-              console.error(err);
-              return err.message;
-            });
-            
-        // return null;
+        return batch.send(this.commandService, 5000)
+          .then(batchBuilderResponse => {
+            console.log("BatchBuilder Response",batchBuilderResponse);
+            return batchBuilderResponse;
+          })
+          .catch(err => {
+            console.error(err);
+            return err.message;
+          }); 
     };
-
-    
 }
 
 export = new FarmerService();
