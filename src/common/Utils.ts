@@ -19,6 +19,10 @@ export function escapeJSON(request: any){
     return myEscapedJSONString;
 };
 
+export function escapeJSONv2(request: any){
+    
+}
+
 export function returnJSON(request: any){
     var myJSONString = JSON.stringify(request);
     var searchVal = /("{)/g;

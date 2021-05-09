@@ -53,7 +53,7 @@ export class AppendRoleRequest {
     roleName!: string;
 
     constructor(accountId: string, roleName: string) {
-        this.accountId = `${accountId}@${accountId}`;
+        this.accountId = accountId;
         this.roleName = roleName;
     }
 }

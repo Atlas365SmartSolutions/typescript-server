@@ -145,7 +145,7 @@ class AdminController {
             ...transferLicensesTx
           ]).setBatchMeta(1)
          
-          onBoard.txs.filter((x,i,a)=>{
+          onBoard.txs.forEach((x,i,a)=>{
 
             onBoard.sign([IROHA_ADMIN_PRIM_KEY], i)
             .send(this.commandService, 5000)

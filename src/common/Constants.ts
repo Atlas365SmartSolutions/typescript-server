@@ -8,4 +8,5 @@ export const IROHA_ADMIN_PRIM_KEY = 'fbd6b32bacf8ca07ca8e323fc5cd852622750aea0be
 export const IROHA_ROLE_LICENSEE = 'licensee';
 export const IROHA_ROLE_B2BCUSTOMER = 'b2bcustomer';
 export const IROHA_ROLE_USER = 'user';
+export const IROHA_ROLE_FARMER = 'farmer';
 

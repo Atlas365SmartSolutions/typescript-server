@@ -2,12 +2,14 @@ import { Router } from 'express';
 import QueriesRouter from './queries/QueriesRouter';
 import CommandsRouter from './commands/CommandsRouter';
 import AdminController from '../controllers/AdminController';
+import FarmerController from '../controllers/FarmerController';
 
 class IrohaRouter {
   private _IrohaRouter = Router();
   private _QueriesRouter = QueriesRouter;
   private _CommandsRouter = CommandsRouter;
   private _AdminController = AdminController;
+  private _FarmerController = FarmerController;
 
   get router() {
     return this._IrohaRouter;
@@ -24,6 +26,7 @@ class IrohaRouter {
     this._IrohaRouter.use('/queries', this._QueriesRouter);
     this._IrohaRouter.use('/commands', this._CommandsRouter);
     this._IrohaRouter.use('/admin', this._AdminController);
+    this._IrohaRouter.use('/farmer', this._FarmerController);
   }
 }
 
