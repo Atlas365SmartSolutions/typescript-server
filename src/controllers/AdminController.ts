@@ -1,5 +1,5 @@
 import { Request, response, Response, Router } from 'express';
-import { createKeyPair, escapeJSON, LicenseType } from '../common/Utils';
+import { createKeyPair, escapeJSONObj, LicenseType } from '../common/Utils';
 //import CommandsController from '../controllers/CommandsController';
 //import QueriesController from '../controllers/QueriesController';
 import { AppendRoleRequest, CreateAccountRequest, CreateAssetRequest, CreateDomainRequest, SetAccountDetailRequest, TransferAssetRequest, AdjustAssetQuantityRequest } from '../interfaces/iroha/CommandRequests';
@@ -161,10 +161,10 @@ class AdminController {
                   "txId":onboardLicenseeBatchResp.txHash,
                 }
               };
-              let createAccountDetailReq = new SetAccountDetailRequest(IROHA_ADMIN_ACCOUNT,escapeJSON(detail),onboardLicenseeRequest.facilityName);
+              let createAccountDetailReq = new SetAccountDetailRequest(IROHA_ADMIN_ACCOUNT,escapeJSONObj(detail),onboardLicenseeRequest.facilityName);
       
               const finalTx = new TxBuilder()
-              .setAccountDetail({accountId: createAccountDetailReq.accountId, key: onboardLicenseeRequest.facilityName, value: escapeJSON(detail) })
+              .setAccountDetail({accountId: createAccountDetailReq.accountId, key: onboardLicenseeRequest.facilityName, value: escapeJSONObj(detail) })
               .addMeta('admin@atlas', 1)
               .tx
               
@@ -266,7 +266,7 @@ class AdminController {
                                           "transferLicenseTxs": transferAssetResp
                                         }
                                       };
-                                      let createAccountDetailReq = new SetAccountDetailRequest(IROHA_ADMIN_ACCOUNT,escapeJSON(detail),onboardLicenseeRequest.facilityName);
+                                      let createAccountDetailReq = new SetAccountDetailRequest(IROHA_ADMIN_ACCOUNT,escapeJSONObj(detail),onboardLicenseeRequest.facilityName);
                             
                                       this.commandsController.setAccountDetail(createAccountDetailReq).then(setAccountDetailResp => {
                                         console.log(setAccountDetailResp);
