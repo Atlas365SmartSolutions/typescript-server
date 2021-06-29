@@ -1,12 +1,9 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import IrohaRouter from './routers/IrohaRouter';
-import bodyParser from 'body-parser';
-import grpc  from 'grpc';
 import pino  from 'pino';
-import expressPino  from 'express-pino-logger';
 import morgan from 'morgan';
-import { NodeHttpTransport } from '@improbable-eng/grpc-web-node-http-transport';
+import { ATLAS_API_KEY_HEADER, IROHA_ACCOUNT_ID_HEADER, IROHA_ACCOUNT_KEY_HEADER } from './common/Constants';
 
 // load the environment variables from the .env file
 dotenv.config({
@@ -25,20 +22,29 @@ class Server {
 
 // initialize server app
 const server = new Server();
-const grpcCreds = grpc.credentials.createInsecure();
+//const grpcCreds = grpc.credentials.createInsecure();
 const logger = pino({ level: process.env.LOG_LEVEL || 'info' });
-const expressLogger = expressPino({ logger });
+//const expressLogger = expressPino({ logger });
 
 //server.app.use(expressLogger);
 server.app.use(morgan('dev'));
 
+//Check for and print request headers
 server.app.use(function(req,res,next){
-  let logHeaders = req.headers;
+  let irohaAccountHeader = {
+    accountId: req.headers[IROHA_ACCOUNT_ID_HEADER] !== undefined ? req.headers[IROHA_ACCOUNT_ID_HEADER]:"",
+    accountKey: req.headers[IROHA_ACCOUNT_KEY_HEADER] !== undefined ? req.headers[IROHA_ACCOUNT_KEY_HEADER]:"",
+    atlasApiKey: req.headers[ATLAS_API_KEY_HEADER]  !== undefined ? req.headers[ATLAS_API_KEY_HEADER]:""
+  };
+  
+  logger.info(irohaAccountHeader,"::: incoming iroha header");
   console.log(Date.now());
   next();
 });
-server.app.use(bodyParser.json());
-server.app.use(bodyParser.urlencoded({ extended: true }));
+
+//Body parser settings
+server.app.use(express.json());
+server.app.use(express.urlencoded({ extended: true }));
 
 // make server app handle any route starting with '/api'
 server.app.use('/api', server.router);
