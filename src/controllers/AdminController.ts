@@ -1,7 +1,5 @@
 import { Request, response, Response, Router } from 'express';
 import { createKeyPair, escapeJSONObj, LicenseType } from '../common/Utils';
-//import CommandsController from '../controllers/CommandsController';
-//import QueriesController from '../controllers/QueriesController';
 import { AppendRoleRequest, CreateAccountRequest, CreateAssetRequest, CreateDomainRequest, SetAccountDetailRequest, TransferAssetRequest, AdjustAssetQuantityRequest } from '../interfaces/iroha/CommandRequests';
 import { GetAccountRequest } from '../interfaces/iroha/QueryRequests';
 import { IROHA_ADMIN_ACCOUNT, IROHA_ACCOUNT_SUFFIX, IROHA_ADMIN_PRIM_KEY, IROHA_DOMAIN_ID, IROHA_PEER_ADDR, IROHA_ROLE_LICENSEE, IROHA_ROLE_USER } from '../common/Constants';
@@ -17,14 +15,17 @@ import { AddAssetQuantity } from '../interfaces/Interfaces';
 import grpc from 'grpc';
 import { CommandService_v1Client } from 'iroha-helpers-ts/lib/proto/endpoint_grpc_pb';
 import { Transaction } from 'iroha-helpers-ts/lib/proto/transaction_pb';
+import FarmerService from '../services/FarmerService';
+
+import pino = require('pino');
 
 class AdminController {
     private _router = Router();
     private commandsController = CommandsController;
     private queriesController = QueriesController;
     private commandService = new CommandService_v1Client(IROHA_PEER_ADDR,grpc.credentials.createInsecure())
-
-
+    private logger = pino({ level: process.env.LOG_LEVEL || 'info' });
+    private farmerService = FarmerService;
 
     get router() {
       return this._router;
@@ -32,9 +33,26 @@ class AdminController {
 
     constructor(){
         this._onboardLicensee();
+        this._onboardFarmer();
         this._processHempCOA();
         this._generateKeyPair();
         this._testBatch();
+    }
+
+    private async _onboardFarmer(){
+      this._router.post('/onboardFarmer', (req: Request, res: Response) => {
+        this.logger.info("Incoming request for *onboardFarmer* :::");
+        this.logger.info(res.locals.irohaAccountHeader,"Incoming Iroha header::");
+        this.farmerService.adminOnboardFarmer(req.body,res.locals.irohaAccountHeader)
+          .then((irohaResponse:any) => {
+              console.log('REQ:::::::', req.body)
+            if (irohaResponse.status === 'COMMITTED') {
+              res.status(200).json(irohaResponse);
+            } else {
+              res.status(500).json(irohaResponse);
+            }
+          });
+              });
     }
 
     // TO DO

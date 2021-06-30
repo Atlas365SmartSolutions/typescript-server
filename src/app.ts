@@ -37,8 +37,8 @@ server.app.use(function(req,res,next){
     atlasApiKey: req.headers[ATLAS_API_KEY_HEADER]  !== undefined ? req.headers[ATLAS_API_KEY_HEADER]:""
   };
   
-  logger.info(irohaAccountHeader,"::: incoming iroha header");
   console.log(Date.now());
+  res.locals.irohaAccountHeader = irohaAccountHeader; 
   next();
 });
 

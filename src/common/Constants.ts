@@ -2,6 +2,7 @@ export const IROHA_DOMAIN_ID = 'atlas';
 export const IROHA_ACCOUNT_SUFFIX = '@atlas';
 export const IROHA_ADMIN_ACCOUNT = 'admin@atlas';
 export const IROHA_PEER_ADDR = 'localhost:50052';
+export const IROHA_PEER_DOCKER_NAME = 'iroha1';
 export const IROHA_ADMIN_PRIM_KEY = 'fbd6b32bacf8ca07ca8e323fc5cd852622750aea0be29bdaddd9c82a00380559';
 
 export const FARMER_PRIV_KEY = 'd7b84fe76a5ec424f3197e187120d73525683da4e5af16511e67d1c6220a482a';
