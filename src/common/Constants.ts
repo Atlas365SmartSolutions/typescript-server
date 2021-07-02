@@ -19,3 +19,4 @@ export const IROHA_ACCOUNT_ID_HEADER = 'iroha-account-id';
 export const IROHA_ACCOUNT_KEY_HEADER = 'iroha-account-key';
 export const ATLAS_API_KEY_HEADER = 'atlas-api-key';
 
+export const SHIP_HEMP_DESC = 'Shipping Hemp Product';

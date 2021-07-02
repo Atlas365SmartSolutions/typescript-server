@@ -4,7 +4,7 @@ import {
   } from 'iroha-helpers-ts/lib/proto/endpoint_grpc_pb';
 import { Field, InitalizeFieldRequest, OnboardFarmerRequest } from '../interfaces/AccountInterfaces';
 import { IncomingHttpHeaders } from 'http';
-import { IROHA_ADMIN_PRIM_KEY, IROHA_PEER_ADDR, IROHA_ROLE_FARMER, IROHA_ROLE_USER, COMMITTED, IROHA_ACCOUNT_ID_HEADER, DEFAULT_PAGE_SIZE, IROHA_PEER_DOCKER_NAME } from '../common/Constants';
+import { IROHA_ADMIN_PRIM_KEY, IROHA_PEER_ADDR, IROHA_ROLE_FARMER, IROHA_ROLE_USER, COMMITTED, IROHA_ACCOUNT_ID_HEADER, DEFAULT_PAGE_SIZE, IROHA_PEER_DOCKER_NAME, SHIP_HEMP_DESC } from '../common/Constants';
 import { AdjustAssetQuantityRequest, AppendRoleRequest, CompareAndSetAccountDetailRequest, CreateAccountRequest, CreateAssetRequest, CreateDomainRequest, SetAccountDetailRequest } from '../interfaces/iroha/CommandRequests';
 import { BatchBuilder, TxBuilder } from 'iroha-helpers-ts/lib/chain';
 import { createIrohaBatch, createKeyPair, escapeJSONObj, returnJSON } from '../common/Utils';
@@ -14,6 +14,7 @@ import { response } from 'express';
 import { Transaction } from 'iroha-helpers-ts/lib/proto/transaction_pb';
 import QueriesController from '../controllers/QueriesController';
 import { GetAccountDetailRequest } from '../interfaces/iroha/QueryRequests';
+import { constants } from 'buffer';
 
 class FarmerService {
     private commandService = new CommandService_v1Client(IROHA_PEER_ADDR,grpc.credentials.createInsecure())
@@ -350,6 +351,105 @@ class FarmerService {
           console.log(err);
           return err.message;
         }); 
+    }
+
+    shipHempProduct(shipHempProductRequest:any, txCreatorAccount:any){
+      let txList:Transaction[] = new Array<Transaction>();
+      let farmerAccountId = `${shipHempProductRequest.farm.farmerName}@${shipHempProductRequest.farm.farmBusinessName}`;
+      let licenseeAccountId = `${shipHempProductRequest.facility.facilityName}@${shipHempProductRequest.facility.facilityName}`;
+      let assetsThatCanBeTransferred = new Array<any>();
+
+      //Get assets for FARMER account
+      let getAccountAssetsReq = {
+        "accountId": farmerAccountId,
+        "pageSize": DEFAULT_PAGE_SIZE,
+        "firstAssetId": ''
+      };
+
+      return this.queriesController.getAccountAssets(getAccountAssetsReq)
+        .then(farmerAssets => {
+          console.log(farmerAssets);
+          farmerAssets.forEach((asset:any )=> {
+            //Parse response for only assets matching regex field001hemp0#atlashempfarmsltd
+            let regex = /^[a-zA-Z]+\d\d\d[a-zA-Z]+\d$/i;
+            let assetId = asset.assetId.split('#');
+            console.log(regex.test(assetId[0]));
+            if(regex.exec(assetId[0])){
+              if(parseInt(asset.balance)>0)
+                assetsThatCanBeTransferred.push(asset);
+            }
+          });
+
+          let amountToTransfer = parseInt(shipHempProductRequest.amount)/10;
+
+          if(amountToTransfer > assetsThatCanBeTransferred.length){
+            return {"error": "Not enough to inventory to ship"}
+          }
+
+          for (let i = 0; i < amountToTransfer; i++) {
+
+            let fieldId = assetsThatCanBeTransferred[i].assetId.split("hemp")[0];
+            let fieldAccountId = `${fieldId}@${shipHempProductRequest.farm.farmBusinessName}`;
+
+            let getAccountDetailReq = {
+              accountId: fieldAccountId,
+              paginationWriter: txCreatorAccount.irohaAccountId,
+              writer: txCreatorAccount.irohaAccountId,
+              pageSize: DEFAULT_PAGE_SIZE,
+              key: 'account',
+              paginationKey: 'account'
+            };
+
+            return this.queriesController.getAccountDetail(getAccountDetailReq)
+            .then(accountResp => {
+              console.log("Response from account query :: %s",returnJSON(accountResp[txCreatorAccount.irohaAccountId]['account']));
+              let fieldAccount = accountResp[txCreatorAccount.irohaAccountId];
+              let fieldDetails = JSON.parse(returnJSON(fieldAccount.account));
+
+              fieldDetails.hempProductId = fieldDetails.hempProductId.filter(function(value:any){ 
+                  return value != assetsThatCanBeTransferred[i].assetId;
+              });
+
+              let updateAccountDetailTx = new TxBuilder()
+                .setAccountDetail({accountId: fieldAccountId, key: 'account', value: escapeJSONObj(fieldDetails)})
+                .addMeta(farmerAccountId, 1)
+                .tx;
+
+              let createHempTransferAssetTx = new TxBuilder()
+                .transferAsset({
+                  amount: assetsThatCanBeTransferred[i].balance,
+                  assetId: assetsThatCanBeTransferred[i].assetId,
+                  description: SHIP_HEMP_DESC,
+                  destAccountId: licenseeAccountId,
+                  srcAccountId: farmerAccountId})
+                .addMeta(farmerAccountId, 1)
+                .tx;
+  
+              txList.push(createHempTransferAssetTx);
+              txList.push(updateAccountDetailTx);
+
+              //create batch transactions
+              const batchBuilder = new BatchBuilder(txList);
+              const txBatch = createIrohaBatch(batchBuilder, txCreatorAccount.irohaAccountKey);
+
+              return txBatch.send(this.commandService, 5000)
+                .then((hempTransferBatchBuilderResponse:any) => {
+                  console.log("BatchBuilder Response",hempTransferBatchBuilderResponse);
+                  return  hempTransferBatchBuilderResponse;
+                })
+                .catch(err => {
+                  console.error(err);
+                  return err.message;
+                }); 
+
+            });
+          }
+        })
+        .catch(err => {
+          console.log(err);
+          return err.message;
+        }); 
+
     }
 }
 

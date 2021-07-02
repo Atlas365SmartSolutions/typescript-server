@@ -11,6 +11,7 @@ class FarmerController {
       this._initalizeFields();
       this._updateField();
       this._createProductFromField();
+      this._shipHempProduct();
     }
 
     get router() {
@@ -87,6 +88,26 @@ class FarmerController {
         this._farmerService.createProductFromField(req.body,txCreatorAccount)
           .then((irohaResponse:any) => {
             console.log('REQ:::::::', req.body)
+            if (irohaResponse.status === 'COMMITTED') {
+              res.status(200).json(irohaResponse);
+            } else {
+              res.status(500).json(irohaResponse);
+            }
+          })
+        
+      });
+    }
+
+    private async _shipHempProduct(){
+      this._router.post('/shipHempProduct', (req: Request, res: Response) => {
+        console.log("Incoming request for API shipHempProduct ::: %s", req.body);
+        let txCreatorAccount:any = {
+          irohaAccountId: req.headers[IROHA_ACCOUNT_ID_HEADER],
+          irohaAccountKey: req.headers[IROHA_ACCOUNT_KEY_HEADER]
+        };
+
+        this._farmerService.shipHempProduct(req.body,txCreatorAccount)
+          .then((irohaResponse:any) => {
             if (irohaResponse.status === 'COMMITTED') {
               res.status(200).json(irohaResponse);
             } else {
