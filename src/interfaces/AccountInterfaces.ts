@@ -12,6 +12,17 @@ export class OnboardFarmerRequest {
     irohaKeys?: [keyPair]  
 }
 
+export class OnboardEcoPointsMemberRequest {
+    consumerId!: string;
+    firstname!: string;
+    lastname!: string;
+    email!: string;
+    ecoPointsValue!: string;
+    city!: string;
+    dob!: string;
+    password!: string;
+}
+
 export class Farm {
     farmerName!: string;
     farmAddress!: string;

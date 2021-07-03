@@ -16,6 +16,7 @@ import grpc from 'grpc';
 import { CommandService_v1Client } from 'iroha-helpers-ts/lib/proto/endpoint_grpc_pb';
 import { Transaction } from 'iroha-helpers-ts/lib/proto/transaction_pb';
 import FarmerService from '../services/FarmerService';
+import EcoPointsService from '../services/EcoPointsService';
 
 import pino = require('pino');
 
@@ -26,17 +27,35 @@ class AdminController {
     private commandService = new CommandService_v1Client(IROHA_PEER_ADDR,grpc.credentials.createInsecure())
     private logger = pino({ level: process.env.LOG_LEVEL || 'info' });
     private farmerService = FarmerService;
+    private ecoPointsService = EcoPointsService;
 
     get router() {
       return this._router;
     }
 
     constructor(){
+        this._onboardEcoPointsMember();
         this._onboardLicensee();
         this._onboardFarmer();
         this._processHempCOA();
         this._generateKeyPair();
         this._testBatch();
+    }
+
+    private async _onboardEcoPointsMember(){
+      this._router.post('/onboardEcoPointsMember', (req: Request, res: Response) => {
+        this.logger.info("Incoming request for *onboardEcoPointsMember* :::");
+        this.logger.info(res.locals.irohaAccountHeader,"Incoming Iroha header::");
+        this.ecoPointsService.onboardMember(req.body,res.locals.irohaAccountHeader)
+          .then((irohaResponse:any) => {
+              console.log('REQ:::::::', req.body)
+            if (irohaResponse.status === 'COMMITTED') {
+              res.status(200).json(irohaResponse);
+            } else {
+              res.status(500).json(irohaResponse);
+            }
+          });
+      });
     }
 
     private async _onboardFarmer(){
