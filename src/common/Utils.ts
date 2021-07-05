@@ -1,7 +1,6 @@
 import { BatchBuilder } from "iroha-helpers-ts/lib/chain";
 import cryptoHelper from "iroha-helpers-ts/lib/cryptoHelper";
 import { IrohaErrorResponse, IrohaSuccessResponse } from "../interfaces/iroha/IrohaResponses";
-import { IROHA_ADMIN_PRIM_KEY } from "./Constants";
 
 export class utils {
     constructor(){}

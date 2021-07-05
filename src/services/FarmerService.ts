@@ -2,7 +2,7 @@ import * as grpc from 'grpc';
 import {
     CommandService_v1Client as CommandService_v1Client
   } from 'iroha-helpers-ts/lib/proto/endpoint_grpc_pb';
-import { Field, InitalizeFieldRequest, OnboardFarmerRequest } from '../interfaces/AccountInterfaces';
+import { InitalizeFieldRequest, OnboardFarmerRequest } from '../interfaces/AccountInterfaces';
 import { IncomingHttpHeaders } from 'http';
 import { IROHA_ADMIN_PRIM_KEY, IROHA_PEER_ADDR, IROHA_ROLE_FARMER, IROHA_ROLE_USER, COMMITTED, IROHA_ACCOUNT_ID_HEADER, DEFAULT_PAGE_SIZE, IROHA_PEER_DOCKER_NAME, SHIP_HEMP_DESC } from '../common/Constants';
 import { AdjustAssetQuantityRequest, AppendRoleRequest, CompareAndSetAccountDetailRequest, CreateAccountRequest, CreateAssetRequest, CreateDomainRequest, SetAccountDetailRequest } from '../interfaces/iroha/CommandRequests';
@@ -10,11 +10,8 @@ import { BatchBuilder, TxBuilder } from 'iroha-helpers-ts/lib/chain';
 import { createIrohaBatch, createKeyPair, escapeJSONObj, returnJSON } from '../common/Utils';
 import _ from 'lodash';
 import {exec} from 'child_process';
-import { response } from 'express';
 import { Transaction } from 'iroha-helpers-ts/lib/proto/transaction_pb';
 import QueriesController from '../controllers/QueriesController';
-import { GetAccountDetailRequest } from '../interfaces/iroha/QueryRequests';
-import { constants } from 'buffer';
 
 class FarmerService {
     private commandService = new CommandService_v1Client(IROHA_PEER_ADDR,grpc.credentials.createInsecure())

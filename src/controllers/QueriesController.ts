@@ -5,14 +5,6 @@ import {
 import queriesInit from 'iroha-helpers-ts/lib/queries/index';
 import { IROHA_ADMIN_ACCOUNT, IROHA_ADMIN_PRIM_KEY, IROHA_PEER_ADDR } from '../common/Constants';
 import { setIrohaErrorResp, setIrohaSuccessResp } from '../common/Utils'
-import { AccountResponse, SignatoriesResponse,
-        TransactionsResponse, PendingTransactionsPageResponse,
-        TransactionsPageResponse, AccountAssetResponse,
-        AccountDetailResponse, Asset, PeersResponse,
-        RolesResponse, RolePermissionsResponse,
-        BlockResponse,
-        EngineReceiptsResponse
-       } from '../interfaces/Interfaces';
 import { GetAccountAssetsRequest, GetAccountAssetTransactionsRequest, GetAccountDetailRequest, GetAccountRequest, GetAccountTransactionsRequest, GetAssetInfoRequest, GetBlockRequest, GetEngineReceiptsRequest, GetPendingTxsRequest, GetRawAccountRequest, GetRolePermissionsRequest, GetSignatoriesRequest, GetTransactionsRequest } from '../interfaces/iroha/QueryRequests';
 
 class QueriesController {

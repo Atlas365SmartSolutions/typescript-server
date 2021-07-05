@@ -6,7 +6,6 @@ import commandsInit from 'iroha-helpers-ts/lib/commands/index';
 import { setIrohaErrorResp, setIrohaSuccessResp } from '../common/Utils';
 import { AdjustAssetQuantityRequest, AddPeerRequest, AddSignatoryRequest, AppendRoleRequest, CompareAndSetAccountDetailRequest, CreateAccountRequest, CreateAssetRequest, CreateDomainRequest, CreateRoleRequest, DetachRoleRequest, GrantablePermissionRequest, RemovePeerRequest, RemoveSignatoryRequest, RevokePermissionRequest, SetAccountDetailRequest, SetAccountQuorumRequest, TransferAssetRequest } from '../interfaces/iroha/CommandRequests';
 import { IROHA_ADMIN_ACCOUNT, IROHA_ADMIN_PRIM_KEY, IROHA_PEER_ADDR } from '../common/Constants';
-import * as Service from "iroha-helpers-ts";
 
 class CommandsController {
 
